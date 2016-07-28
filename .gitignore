@@ -1,0 +1,4 @@
+kilobox/Box2D/Documentation
+*.cpp~
+*.h~
+*.world~

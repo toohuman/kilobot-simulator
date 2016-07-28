@@ -1,0 +1,156 @@
+Kilobox - A Kilobot simulator based on Box2D
+============================================
+
+This is a kilobot simulator based on the 2D physiscs simulation library
+Box2D v2.3.0.
+
+I've modified the standard testbed supplied with Box2D to add the kilobot 
+simulation stuff, and hacked the cmake scripts so that I can build an
+Xcode project with the standard commands.
+
+
+Build instructions
+==================
+
+Tested on OSX 10.9, OSX 10.10, Ubuntu 14.04. Many deprecated warnings
+about glut with OSX builds. Not sure what dependencies are needed for
+Ubuntu, haven't tried with a clean install. Uses C++11.
+
+
+git clone https://siteks@bitbucket.org/siteks/kilobox.git
+cd kilobox
+git checkout thin_framework
+cd ..
+mkdir kilobox_build
+cd kilobox_build
+cmake ../kilobox/Box2D
+make
+
+
+Example simulation
+==================
+
+./Testbed/Testbed ../kilobox/worlds/test100.world
+
+
+Notes
+=====
+
+Directory structure:
+
+.
+├── Box2D
+│   ├── Box2D
+│   │   ├── Collision
+│   │   │   └── Shapes
+│   │   ├── Common
+│   │   ├── Dynamics
+│   │   │   ├── Contacts
+│   │   │   └── Joints
+│   │   └── Rope
+│   ├── Build
+│   │   ├── vs2012
+│   │   └── xcode5
+│   │       └── Box2D.xcodeproj
+│   │           └── project.xcworkspace
+│   ├── Documentation
+│   │   ├── API
+│   │   │   └── html
+│   │   │       └── search
+│   │   └── images
+│   ├── HelloWorld
+│   ├── Testbed
+│   │   ├── Framework
+│   │   └── Tests
+│   ├── freeglut
+│   └── glui
+└── worlds
+    └── bitmaps
+
+
+The main Box2D library, under Box2D/Box2D, is almost unchanged. The only changes have 
+been to Box2D/Common/b2Settings.h, tuning some values to be more appropriate
+to the distance and velocity regime of the kilobots:
+
+b2_linearSlop               0.005   ->  0.0005
+b2_velocityThreshold        1.0     ->  0.01    
+b2_linearSleepTolerance     0.01    ->  0.001
+
+The Testbed as supplied with the Box2D library in Testbed/Framework has been heavily 
+hacked to give what I wanted for kilobot simulation. The main changes give a
+similar command line interface to Stage and move away from the Box2D philosophy of 
+accurate simulation appearance in GUI to as fast as possible sim in both GUI and 
+command line.
+
+Testbench/Tests contains the code for the actual kilobot world and API emulation.
+
+kiloworld.cpp/h
+---------------
+This contains the class for the simulated world. It is instantiated by the Testbench
+and the constructor builds the Box2D structures to support the physics simulation. 
+It does this by reading in a world configuration file that is directly compatible with
+Stage. This file specifies the pose and controller for each robot that the world
+contains. The example world file - test100.world - contain a lot of stuff for setting
+the geometry of the floorplan and of the robot bodies that is used by Stage but currently
+ignored by kilobox.
+
+The worldfile is read using code in worldfile.cpp/h which is directly lifted from the
+Stage codebase. Most commands are ignored, "quit_time <n>" is honoured as specifying
+the simulation run time when in nongui mode. The model structure is fully parsed and
+it is then assumed that all "position" models are kilobots and a kilobot is created for 
+each "position" model with the specified pose. 
+
+Each model is checked to see if it specifies a controller but the only controller 
+actually instantiated is Evokilo1. Sufficient bits and pieces of the Stage environment
+are recreated so that the environment the kilolib code is running in is quite similar
+to that of the Stage kilobot simulation.
+
+worldfile.cpp/h
+---------------
+Worldfile parsing code from Stage.
+
+kilolib.cpp/h
+-------------
+This actually implements the kilobot model. Each kilobot found in the world 
+configuration file will result in the construction of an instance of the controller,
+in this case always Evokilo1, which inherits from the class Kilobot.
+Kilobot creates the physical model for Box2D, and internal state for providing
+the kilolib API that user kilobot code is written against. Every physics timestep 
+(currently 50Hz, 20ms), the main loop calls each kilobots Kilobot::update() method, 
+which handles the robot kinematics in order to work out what forces to apply, and 
+the kilobot message system. It also calls the loop() code in the controller.
+
+If the sim is running a GUI, the Kilobot::render() method is called so the kilobot 
+can draw itself
+
+evokilo1.cpp/h
+--------------
+This is the code that would run on the real kilobot.
+
+This is the only controller currently supported. It is basically compatible with the
+real kilobots with some extra code to do position logging to a file. It runs the kilobot 
+using a fully recurrent neural net, the weights of which are provided in the worldfile
+defining the robot.
+
+
+
+To Do
+=====
+
+1)  Update GUI so the sim speed can be controlled
+2)  Generalise the mechanism for pulling in controller code. I think Stage
+    used libtool but I never investigated too deeply
+2a) Make build scripts in some form so that just controller code can be built
+    and linked against the simulator? Rather than rebuilding the entire code
+    for just controller changes
+3)  Array simulation. Running multiple copies of the kilobot arena within the
+    same simulated world. This will probably be necessary to get the amount of 
+    work per timestep sufficiently high that OpenCL acceleration has real benefits.
+    I've started this, kiloworld.h has xgrid and ygrid which cause an array to be 
+    created. The individual simulations diverge, this may be because they are at
+    different physical locations and thus different floating point effects apply
+4)  Profile and analyse the performance of the 2D physics engine in order to 
+    accelerate it using OpenCL. 
+
+
+
