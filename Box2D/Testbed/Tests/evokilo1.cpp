@@ -47,7 +47,7 @@ void Kilobee::setup()
 
     while (1)
     {
-        for (int b = 0; b < LANG_SIZE - 1; b++)
+        for (int b = 0; b < SITE_NUM - 1; b++)
         {
             beliefs[b] = rand_hard() / 255.0;
         }
@@ -55,7 +55,7 @@ void Kilobee::setup()
         uint8_t exitScope = 1;
         double prevBelief = beliefs[0];
 
-        for (int b = 1; b < LANG_SIZE - 1; b++)
+        for (int b = 1; b < SITE_NUM - 1; b++)
         {
            if (prevBelief <= beliefs[b])
            {
@@ -67,8 +67,6 @@ void Kilobee::setup()
         if (exitScope == 1)
             break;
     }
-
-    std::cout << beliefs[0] << std::endl;
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
@@ -89,11 +87,41 @@ void Kilobee::setup()
     msg.data[0] = rand_hard();
     msg.data[1] = rand_hard();
     // Dance state
-    msg.data[3] = danceState.state;
-    msg.data[4] = nest.site;
+    msg.data[2] = danceState.state;
+    msg.data[3] = nest.site;
+    // Beliefs
+    uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
+    int msgIndex = 4;
+    for (int b = 0; b < SITE_NUM - 1; b++)
+    {
+        /*uint32_t convertedBelief = (uint32_t) ((beliefs[b] * pow(10, 7)) + 0.5);
+        uint8_t convertedBytes[BELIEF_BYTES];
+        // Shift the bits right by the desired about (cutting off the lower order) and mask with 255
+        convertedBytes[0] = (uint8_t) (convertedBelief >> 16) & 0xFF;
+        convertedBytes[1] = (uint8_t) (convertedBelief >> 8) & 0xFF;
+        convertedBytes[2] = (uint8_t) convertedBelief & 0xFF;
+
+    	msg.data[4 + b++] = convertedBytes[0];
+        msg.data[4 + b++] = convertedBytes[1];
+        msg.data[4 + b] = convertedBytes[2];*/
+        int byteIndex = msgIndex + (b * BELIEF_BYTES);
+        doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
+        for (int i = b * BELIEF_BYTES; i < (b * BELIEF_BYTES) + BELIEF_BYTES; i++)
+        {
+        	msg.data[byteIndex + i] = convertedBytes[i];
+        }
+    }
 
     msg.type = NORMAL;
     msg.crc = message_crc(&msg);
+
+    /*uint32_t reformedBytes;
+    double reformedBelief = 0.0;
+    reformedBytes = (msg.data[4] << 16) + (msg.data[5] << 8) + msg.data[6];
+    reformedBelief = (double) reformedBytes / pow(10, 7);*/
+
+    std::cout << beliefs[0] << std::endl;
+    std::cout << bytesToDouble(msg.data + msgIndex) << std::endl;
 
     if (danceState.state == 1)
     {
@@ -132,6 +160,17 @@ void Kilobee::loop()
                 break;
         }*/
 
+	    // Dance state
+	    msg.data[2] = danceState.state;
+	    msg.data[3] = nest.site;
+	    // Beliefs
+	    for (int b = 0; b < SITE_NUM - 1; b++)
+	    {
+	    	msg.data[4 + b] = beliefs[b];
+	    }
+
+	    msg.type = NORMAL;
+	    msg.crc = message_crc(&msg);
 
         if (danceState.state == 0)
         {
@@ -149,7 +188,7 @@ void Kilobee::loop()
 
                 if (dancingBeeCount > 0)
                 {
-                    double *dancingBees = (double *) malloc(sizeof(double) * (dancingBeeCount * LANG_SIZE - 1));
+                    double *dancingBees = (double *) malloc(sizeof(double) * (dancingBeeCount * SITE_NUM - 1));
                     int dbIndex = 0;
                     for (int i = 0; i < messageCount; i++)
                     {
@@ -157,21 +196,21 @@ void Kilobee::loop()
                         if (messages[i][0] == 1)
                         {
                             // Set the dancing bee to its beliefs
-                            for (int b = 0; b < LANG_SIZE - 1; b++)
+                            for (int b = 0; b < SITE_NUM - 1; b++)
                             {
-                            	dancingBees[dbIndex + b] = messages[i][b + 1];
+                            	dancingBees[dbIndex + b] = messages[i][2 + b];
                             }
 
-                            dbIndex += LANG_SIZE - 1;
+                            dbIndex += SITE_NUM - 1;
                         }
                     }
 
-                    double *otherBeliefs = &dancingBees[(rand_hard() % dancingBeeCount) * (LANG_SIZE - 1)];
-                    double newBeliefs[LANG_SIZE - 1];
+                    double *otherBeliefs = &dancingBees[(rand_hard() % dancingBeeCount) * (SITE_NUM - 1)];
+                    double newBeliefs[SITE_NUM - 1];
 
                     consensus(beliefs, otherBeliefs, newBeliefs);
 
-                    for (int i = 0; i < LANG_SIZE; i++)
+                    for (int i = 0; i < SITE_NUM - 1; i++)
                     {
                         beliefs[i] = newBeliefs[i];
                     }

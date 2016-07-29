@@ -18,9 +18,12 @@ using namespace Kilolib;
 #define WF(i,h,o) (((i)+1)*(h)+((h)+1)*(o))
 
 // Default values for core definitions
-#define LANG_SIZE 2
+#define SITE_NUM 2
 #define POPUL_SIZE 200
-#define MIN_DISTANCE = 100;
+#define MIN_DISTANCE 100
+
+#define BELIEF_BYTES 3
+#define BELIEF_PRECISION 7
 
 #define BOOLEAN 1.0;
 
@@ -54,9 +57,9 @@ public:
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
-    int nestQualities[LANG_SIZE] = {7, 9};
+    int nestQualities[SITE_NUM] = {7, 9};
 
-    double belief[LANG_SIZE - 1];
+    double belief[SITE_NUM - 1];
 
     // Frank's T-norm:
     // 0.0 = min
@@ -66,7 +69,7 @@ public:
     double baseParam = 1.0;
 
 
-    uint8_t messages[POPUL_SIZE][3 + LANG_SIZE];
+    uint8_t messages[POPUL_SIZE][2 + (3 * (SITE_NUM - 1))];
     message_t msg;
 
     /*
@@ -85,7 +88,7 @@ public:
         uint8_t duration;
     };
 
-    double beliefs[LANG_SIZE];
+    double beliefs[SITE_NUM];
 
     // Kilobee state/belief variables
 
@@ -104,13 +107,36 @@ public:
         nest.siteQuality = quality;
     }
 
+    double bytesToDouble(uint8_t *msgData)
+    {
+        uint32_t reformedBytes = 0;
+        int b = 0;
+        for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
+        {
+            reformedBytes += (*(msgData + b) << i);
+            b++;
+        }
+
+        return (double) reformedBytes / pow(10, BELIEF_PRECISION);
+    }
+
+    void doubleToBytes(double belief, uint8_t *convertedBytes)
+    {
+        uint32_t convertedBelief = (uint32_t) ((belief * pow(10, BELIEF_PRECISION)) + 0.5);
+        int b = 0;
+        for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
+        {
+            *(convertedBytes + b++) = (uint8_t) (convertedBelief >> i) & 0xFF;
+        }
+    }
+
     uint8_t getSiteToVisit(double *beliefs)
     {
         int siteToVisit = -1;
 
         double randomSite = (double) rand_hard() / 255.0;
 
-        for (int i = 0; i < LANG_SIZE - 1; i++)
+        for (int i = 0; i < SITE_NUM - 1; i++)
         {
             if (randomSite <= beliefs[i])
             {
@@ -121,7 +147,7 @@ public:
 
         if (siteToVisit == -1)
         {
-            siteToVisit = LANG_SIZE - 1;
+            siteToVisit = SITE_NUM - 1;
         }
 
         return (uint8_t) siteToVisit;
@@ -139,16 +165,16 @@ public:
         }
         else
         {
-            return log(1 + (pow(exp(p), belief1) - 1) * (pow(exp(p), belief2) - 1) / (exp(p) - 1) ) / p;
+            return log(1.0 + (pow(exp(p), belief1) - 1.0) * (pow(exp(p), belief2) - 1.0) / (exp(p) - 1.0) ) / p;
         }
     }
 
     void consensus(double *beliefs1, double *beliefs2, double *newBeliefs)
     {
-        for (int b = 0; b < LANG_SIZE - 1; b++)
+        for (int b = 0; b < SITE_NUM - 1; b++)
         {
-            double numerator = franksTNorm(beliefs1[0], beliefs2[0], baseParam);
-            double denominator = 1.0 - beliefs1[0] - beliefs2[0] + (2 * numerator);
+            double numerator = franksTNorm(beliefs1[b], beliefs2[b], baseParam);
+            double denominator = 1.0 - beliefs1[b] - beliefs2[b] + (2.0 * numerator);
 
             double newValue = 0.0;
 
@@ -183,8 +209,8 @@ public:
             u1 = (double) rand_hard() / 256;
             u2 = (double) rand_hard() / 256;
 
-            z1 = sqrt(-2 * log(u1)) * cos(2 * M_PI * u2);
-            z2 = sqrt(-2 * log(u1)) * sin(2 * M_PI * u2);
+            z1 = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
+            z2 = sqrt(-2.0 * log(u1)) * sin(2.0 * M_PI * u2);
 
             generate++;
             return z2;
@@ -216,6 +242,7 @@ public:
     {
         return &msg;
     }
+
     void rx_message(message_t *m, distance_measurement_t *d)
     {
         //int distance = estimate_distance(d);
@@ -227,7 +254,7 @@ public:
             // Dance site
             messages[messageCount][1] = m->data[3];
 
-            for (int b = 0; b < LANG_SIZE - 1; b++)
+            for (int b = 0; b < 3 * (SITE_NUM - 1); b++)
             {
                 messages[messageCount][2 + b] = m->data[4 + b];
             }
