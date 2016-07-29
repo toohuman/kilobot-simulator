@@ -19,7 +19,7 @@ using namespace Kilolib;
 
 // Default values for core definitions
 #define SITE_NUM 2
-#define MAX_MSG_SIZE 200
+#define MAX_MSG_SIZE 400
 #define MIN_DISTANCE 100
 
 #define BELIEF_BYTES 3
@@ -138,7 +138,7 @@ public:
 
         for (int i = 0; i < SITE_NUM - 1; i++)
         {
-            if (randomSite <= beliefs[i])
+            if (randomSite < beliefs[i])
             {
                 siteToVisit = i;
                 break;

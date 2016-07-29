@@ -204,6 +204,7 @@ void Kilobee::loop()
                             for (int b = 0; b < SITE_NUM - 1; b++)
                             {
                             	dancingBees[dbIndex + b] = bytesToDouble(&messages[i][2 + b]);
+                            	//std::cout << dancingBees[dbIndex + b] << std::endl;
                             }
 
                             dbIndex += SITE_NUM - 1;
@@ -221,6 +222,8 @@ void Kilobee::loop()
                     }
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
+                    std::cout << "Beliefs: " << beliefs[0] << std::endl;
+                    std::cout << "Site: " << (int) siteToVisit << std::endl;
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
                     setDanceState(1, nestQualities[siteToVisit]);
 
