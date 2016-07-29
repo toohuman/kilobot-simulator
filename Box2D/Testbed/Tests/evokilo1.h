@@ -19,7 +19,7 @@ using namespace Kilolib;
 
 // Default values for core definitions
 #define SITE_NUM 2
-#define POPUL_SIZE 200
+#define MAX_MSG_SIZE 200
 #define MIN_DISTANCE 100
 
 #define BELIEF_BYTES 3
@@ -60,6 +60,7 @@ public:
     int nestQualities[SITE_NUM] = {7, 9};
 
     double belief[SITE_NUM - 1];
+    int beliefStart = 4;
 
     // Frank's T-norm:
     // 0.0 = min
@@ -69,7 +70,7 @@ public:
     double baseParam = 1.0;
 
 
-    uint8_t messages[POPUL_SIZE][2 + (3 * (SITE_NUM - 1))];
+    uint8_t messages[MAX_MSG_SIZE][2 + (BELIEF_BYTES * (SITE_NUM - 1))];
     message_t msg;
 
     /*
@@ -113,8 +114,7 @@ public:
         int b = 0;
         for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
         {
-            reformedBytes += (*(msgData + b) << i);
-            b++;
+            reformedBytes += (*(msgData + b++) << i);
         }
 
         return (double) reformedBytes / pow(10, BELIEF_PRECISION);
@@ -253,10 +253,10 @@ public:
             messages[messageCount][0] = m->data[2];
             // Dance site
             messages[messageCount][1] = m->data[3];
-
+            // Beliefs
             for (int b = 0; b < 3 * (SITE_NUM - 1); b++)
             {
-                messages[messageCount][2 + b] = m->data[4 + b];
+                messages[messageCount][2 + b] = m->data[beliefStart + b];
             }
             messageCount++;
         }

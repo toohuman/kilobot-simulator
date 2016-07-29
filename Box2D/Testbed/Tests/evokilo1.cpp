@@ -91,7 +91,6 @@ void Kilobee::setup()
     msg.data[3] = nest.site;
     // Beliefs
     uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
-    int msgIndex = 4;
     for (int b = 0; b < SITE_NUM - 1; b++)
     {
         /*uint32_t convertedBelief = (uint32_t) ((beliefs[b] * pow(10, 7)) + 0.5);
@@ -104,7 +103,7 @@ void Kilobee::setup()
     	msg.data[4 + b++] = convertedBytes[0];
         msg.data[4 + b++] = convertedBytes[1];
         msg.data[4 + b] = convertedBytes[2];*/
-        int byteIndex = msgIndex + (b * BELIEF_BYTES);
+        int byteIndex = beliefStart + (b * BELIEF_BYTES);
         doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
         for (int i = b * BELIEF_BYTES; i < (b * BELIEF_BYTES) + BELIEF_BYTES; i++)
         {
@@ -121,7 +120,7 @@ void Kilobee::setup()
     reformedBelief = (double) reformedBytes / pow(10, 7);*/
 
     std::cout << beliefs[0] << std::endl;
-    std::cout << bytesToDouble(msg.data + msgIndex) << std::endl;
+    std::cout << bytesToDouble(msg.data + beliefStart) << std::endl;
 
     if (danceState.state == 1)
     {
@@ -164,9 +163,15 @@ void Kilobee::loop()
 	    msg.data[2] = danceState.state;
 	    msg.data[3] = nest.site;
 	    // Beliefs
+	    uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
 	    for (int b = 0; b < SITE_NUM - 1; b++)
 	    {
-	    	msg.data[4 + b] = beliefs[b];
+	        int byteIndex = beliefStart + (b * BELIEF_BYTES);
+	        doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
+	        for (int i = b * BELIEF_BYTES; i < (b * BELIEF_BYTES) + BELIEF_BYTES; i++)
+	        {
+	        	msg.data[byteIndex + i] = convertedBytes[i];
+	        }
 	    }
 
 	    msg.type = NORMAL;
@@ -198,7 +203,7 @@ void Kilobee::loop()
                             // Set the dancing bee to its beliefs
                             for (int b = 0; b < SITE_NUM - 1; b++)
                             {
-                            	dancingBees[dbIndex + b] = messages[i][2 + b];
+                            	dancingBees[dbIndex + b] = bytesToDouble(&messages[i][2 + b]);
                             }
 
                             dbIndex += SITE_NUM - 1;
