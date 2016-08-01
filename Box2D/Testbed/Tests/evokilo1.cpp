@@ -191,7 +191,6 @@ void Kilobee::loop()
                             for (int b = 0; b < SITE_NUM - 1; b++)
                             {
                             	dancingBees[dbIndex + b] = bytesToDouble(&messages[i][2 + b]);
-                            	//std::cout << dancingBees[dbIndex + b] << std::endl;
                             }
 
                             dbIndex += SITE_NUM - 1;
