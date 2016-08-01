@@ -14,9 +14,6 @@
 
 using namespace Kilolib;
 
-#define W(i,h,o) (((i)+1)*(h)+(h)*(h)+((h)+1)*(o))
-#define WF(i,h,o) (((i)+1)*(h)+((h)+1)*(o))
-
 // Default values for core definitions
 #define SITE_NUM 2
 #define MAX_MSG_SIZE 400
@@ -58,8 +55,9 @@ public:
     int lastUpdate = -1;
     int messageCount = 0;
     int nestQualities[SITE_NUM] = {7, 9};
+    int loopCounter = 0;
 
-    double belief[SITE_NUM - 1];
+    double beliefs[SITE_NUM - 1];
     int beliefStart = 4;
 
     // Frank's T-norm:
@@ -88,8 +86,6 @@ public:
         uint8_t state;
         uint8_t duration;
     };
-
-    double beliefs[SITE_NUM];
 
     // Kilobee state/belief variables
 
@@ -134,7 +130,7 @@ public:
     {
         int siteToVisit = -1;
 
-        double randomSite = (double) rand_hard() / 255.0;
+        double randomSite = (double) rand_soft() / 255.0;
 
         for (int i = 0; i < SITE_NUM - 1; i++)
         {
@@ -206,8 +202,8 @@ public:
     {
         if (generate == 0)
         {
-            u1 = (double) rand_hard() / 256;
-            u2 = (double) rand_hard() / 256;
+            u1 = (double) rand_soft() / 256;
+            u2 = (double) rand_soft() / 256;
 
             z1 = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
             z2 = sqrt(-2.0 * log(u1)) * sin(2.0 * M_PI * u2);

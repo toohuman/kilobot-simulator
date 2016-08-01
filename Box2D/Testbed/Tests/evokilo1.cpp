@@ -49,7 +49,7 @@ void Kilobee::setup()
     {
         for (int b = 0; b < SITE_NUM - 1; b++)
         {
-            beliefs[b] = rand_hard() / 255.0;
+            beliefs[b] = rand_soft() / 255.0;
         }
 
         uint8_t exitScope = 1;
@@ -72,7 +72,7 @@ void Kilobee::setup()
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
     setDanceState(1, nestQualities[siteToVisit]);
 
-    double probNotDancing = rand_hard() / 255.0;
+    double probNotDancing = rand_soft() / 255.0;
     if (probNotDancing <= 0.5 && nestQualities[siteToVisit] > 0)
     {
         setDanceState(1, nestQualities[siteToVisit]);
@@ -84,8 +84,8 @@ void Kilobee::setup()
 
     // Generate random integers to fill both ID bytes, leading to a 16-bit
     // number with 65,536 possible values: 255 (8-bit) x 255 (8-bit).
-    msg.data[0] = rand_hard();
-    msg.data[1] = rand_hard();
+    msg.data[0] = rand_soft();
+    msg.data[1] = rand_soft();
     // Dance state
     msg.data[2] = danceState.state;
     msg.data[3] = nest.site;
@@ -125,7 +125,7 @@ void Kilobee::loop()
         lastUpdate = kilo_ticks;
 
         // Random movement
-        /*switch(rand_hard() % 4)
+        /*switch(rand_soft() % 4)
         {
             case(0):
                 set_motors(0,0);
@@ -143,6 +143,8 @@ void Kilobee::loop()
                 set_motors(kilo_straight_left, kilo_straight_right); // 65
                 break;
         }*/
+
+        std::cout << "+:" << (int) loopCounter << ":" << (int) ((msg.data[0] << 8) + msg.data[1]) << ":" << (int) danceState.state << ":" << (int) nest.site << ":" << beliefs[0] << ":" << (int) messageCount << std::endl;
 
 	    // Dance state
 	    msg.data[2] = danceState.state;
@@ -196,7 +198,7 @@ void Kilobee::loop()
                         }
                     }
 
-                    double *otherBeliefs = &dancingBees[(rand_hard() % dancingBeeCount) * (SITE_NUM - 1)];
+                    double *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM - 1)];
                     double newBeliefs[SITE_NUM - 1];
 
                     consensus(beliefs, otherBeliefs, newBeliefs);
@@ -214,7 +216,7 @@ void Kilobee::loop()
                 }
             }
 
-            double probNotDancing = rand_hard() / 255.0;
+            double probNotDancing = rand_soft() / 255.0;
             if (probNotDancing <= 0.5 && nestQualities[nest.site] > 0)
             {
                 setDanceState(1, nestQualities[nest.site]);
@@ -249,6 +251,7 @@ void Kilobee::loop()
         }
 
         messageCount = 0;
+        loopCounter++;
     }
 
 }
