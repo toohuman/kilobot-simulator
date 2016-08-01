@@ -201,11 +201,13 @@ void Kilobee::loop()
                     //double newBeliefs[SITE_NUM - 1];
 
                     //consensus(beliefs, otherBeliefs, newBeliefs);
-
-                    for (int i = 0; i < SITE_NUM - 1; i++)
+                    if (rand_soft() % 2 == 1)
                     {
-                        beliefs[i] = otherBeliefs[i];
-                    }
+	                    for (int i = 0; i < SITE_NUM - 1; i++)
+	                    {
+	                        beliefs[i] = otherBeliefs[i];
+	                    }
+	                }
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
