@@ -93,16 +93,6 @@ void Kilobee::setup()
     uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
     for (int b = 0; b < SITE_NUM - 1; b++)
     {
-        /*uint32_t convertedBelief = (uint32_t) ((beliefs[b] * pow(10, 7)) + 0.5);
-        uint8_t convertedBytes[BELIEF_BYTES];
-        // Shift the bits right by the desired about (cutting off the lower order) and mask with 255
-        convertedBytes[0] = (uint8_t) (convertedBelief >> 16) & 0xFF;
-        convertedBytes[1] = (uint8_t) (convertedBelief >> 8) & 0xFF;
-        convertedBytes[2] = (uint8_t) convertedBelief & 0xFF;
-
-    	msg.data[4 + b++] = convertedBytes[0];
-        msg.data[4 + b++] = convertedBytes[1];
-        msg.data[4 + b] = convertedBytes[2];*/
         int byteIndex = beliefStart + (b * BELIEF_BYTES);
         doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
         for (int i = b * BELIEF_BYTES; i < (b * BELIEF_BYTES) + BELIEF_BYTES; i++)
@@ -113,11 +103,6 @@ void Kilobee::setup()
 
     msg.type = NORMAL;
     msg.crc = message_crc(&msg);
-
-    /*uint32_t reformedBytes;
-    double reformedBelief = 0.0;
-    reformedBytes = (msg.data[4] << 16) + (msg.data[5] << 8) + msg.data[6];
-    reformedBelief = (double) reformedBytes / pow(10, 7);*/
 
     std::cout << beliefs[0] << std::endl;
     std::cout << bytesToDouble(msg.data + beliefStart) << std::endl;
@@ -222,8 +207,6 @@ void Kilobee::loop()
                     }
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
-                    std::cout << "Beliefs: " << beliefs[0] << std::endl;
-                    std::cout << "Site: " << (int) siteToVisit << std::endl;
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
                     setDanceState(1, nestQualities[siteToVisit]);
 
