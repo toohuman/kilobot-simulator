@@ -2,3 +2,5 @@ kilobox/Box2D/Documentation
 *.cpp~
 *.h~
 *.world~
+
+kilobox/worlds/generated
