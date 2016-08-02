@@ -22,8 +22,6 @@ using namespace Kilolib;
 #define BELIEF_BYTES 3
 #define BELIEF_PRECISION 7
 
-#define BOOLEAN 1.0;
-
 
 class Kilobee : public Kilobot
 {
@@ -58,7 +56,7 @@ public:
     int loopCounter = 0;
 
     double beliefs[SITE_NUM - 1];
-    int beliefStart = 4;
+    int beliefStart = 2;
 
     // Frank's T-norm:
     // 0.0 = min
@@ -246,9 +244,9 @@ public:
         if (1)// distance < min_distance)
         {
             // Dance state
-            messages[messageCount][0] = m->data[2];
+            messages[messageCount][0] = m->data[0];
             // Dance site
-            messages[messageCount][1] = m->data[3];
+            messages[messageCount][1] = m->data[1];
             // Beliefs
             for (int b = 0; b < 3 * (SITE_NUM - 1); b++)
             {
