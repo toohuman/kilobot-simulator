@@ -84,11 +84,11 @@ void Kilobee::setup()
 
     // Generate random integers to fill both ID bytes, leading to a 16-bit
     // number with 65,536 possible values: 255 (8-bit) x 255 (8-bit).
-    msg.data[0] = rand_soft();
-    msg.data[1] = rand_soft();
+    //msg.data[0] = rand_soft();
+    //msg.data[1] = rand_soft();
     // Dance state
-    msg.data[2] = danceState.state;
-    msg.data[3] = nest.site;
+    msg.data[0] = danceState.state;
+    msg.data[1] = nest.site;
     // Beliefs
     uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
     for (int b = 0; b < SITE_NUM - 1; b++)
@@ -103,9 +103,6 @@ void Kilobee::setup()
 
     msg.type = NORMAL;
     msg.crc = message_crc(&msg);
-
-    std::cout << beliefs[0] << std::endl;
-    std::cout << bytesToDouble(msg.data + beliefStart) << std::endl;
 
     if (danceState.state == 1)
     {
@@ -144,11 +141,11 @@ void Kilobee::loop()
                 break;
         }*/
 
-        std::cout << "+:" << (int) loopCounter << ":" << (int) ((msg.data[0] << 8) + msg.data[1]) << ":" << (int) danceState.state << ":" << (int) nest.site << ":" << beliefs[0] << ":" << (int) messageCount << std::endl;
+        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":" << beliefs[0] << ":" << (int) messageCount << std::endl;
 
 	    // Dance state
-	    msg.data[2] = danceState.state;
-	    msg.data[3] = nest.site;
+	    msg.data[0] = danceState.state;
+	    msg.data[1] = nest.site;
 	    // Beliefs
 	    uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
 	    for (int b = 0; b < SITE_NUM - 1; b++)
