@@ -52,14 +52,14 @@ void Kilobee::setup()
             beliefs[b] = rand_soft() / 255.0;
         }
 
-        uint8_t exitScope = 0;
+        uint8_t exitScope = 1;
         double prevBelief = beliefs[0];
 
         for (int b = 1; b < SITE_NUM - 1; b++)
         {
-           if (prevBelief <= beliefs[b])
+           if (prevBelief > beliefs[b])
            {
-                exitScope = 1;
+                exitScope = 0;
                 break;
            }
         }
@@ -95,9 +95,9 @@ void Kilobee::setup()
     {
         int byteIndex = beliefStart + (b * BELIEF_BYTES);
         doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
-        for (int i = b * BELIEF_BYTES; i < (b * BELIEF_BYTES) + BELIEF_BYTES; i++)
+        for (int i = 0; i < BELIEF_BYTES; i++)
         {
-        	msg.data[byteIndex + i] = convertedBytes[i];
+        	msg.data[byteIndex + i] = convertedBytes[(b * BELIEF_BYTES) + i];
         }
     }
 
@@ -156,16 +156,16 @@ void Kilobee::loop()
 	    msg.data[0] = danceState.state;
 	    msg.data[1] = nest.site;
 	    // Beliefs
-	    uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
-	    for (int b = 0; b < SITE_NUM - 1; b++)
-	    {
-	        int byteIndex = beliefStart + (b * BELIEF_BYTES);
-	        doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
-	        for (int i = b * BELIEF_BYTES; i < (b * BELIEF_BYTES) + BELIEF_BYTES; i++)
-	        {
-	        	msg.data[byteIndex + i] = convertedBytes[i];
-	        }
-	    }
+        uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
+        for (int b = 0; b < SITE_NUM - 1; b++)
+        {
+            int byteIndex = beliefStart + (b * BELIEF_BYTES);
+            doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
+            for (int i = 0; i < BELIEF_BYTES; i++)
+            {
+                msg.data[byteIndex + i] = convertedBytes[(b * BELIEF_BYTES) + i];
+            }
+        }
 
 	    msg.type = NORMAL;
 	    msg.crc = message_crc(&msg);
