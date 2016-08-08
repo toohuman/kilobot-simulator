@@ -52,14 +52,14 @@ void Kilobee::setup()
             beliefs[b] = rand_soft() / 255.0;
         }
 
-        uint8_t exitScope = 1;
+        uint8_t exitScope = 0;
         double prevBelief = beliefs[0];
 
         for (int b = 1; b < SITE_NUM - 1; b++)
         {
            if (prevBelief <= beliefs[b])
            {
-                exitScope = 0;
+                exitScope = 1;
                 break;
            }
         }
@@ -141,7 +141,16 @@ void Kilobee::loop()
                 break;
         }*/
 
-        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":" << beliefs[0] << ":" << (int) messageCount << std::endl;
+        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
+        for (int i = 0; i < SITE_NUM - 1; i++)
+        {
+            if (i != 0)
+            {
+                std::cout << ";";
+            }
+            std::cout << beliefs[i];
+        }
+        std::cout << ":" << (int) messageCount << std::endl;
 
 	    // Dance state
 	    msg.data[0] = danceState.state;
