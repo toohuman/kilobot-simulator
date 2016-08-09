@@ -45,28 +45,24 @@ void Kilobee::setup()
     // msg.type = NORMAL;
     // msg.crc = message_crc(&msg);
 
-    double beliefSum = 0.0;
+    // double beliefSum = 0.0;
     for (int b = 0; b < SITE_NUM - 1; b++)
     {
         beliefs[b] = rand_soft() / 255.0;
-        beliefSum += beliefs[b];
+        // beliefSum += beliefs[b];
     }
-    beliefSum += rand_soft() / 255.0;
-    for (int b = 0; b < SITE_NUM - 1; b++)
-    {
-        beliefs[b] = beliefs[b] / beliefSum;
-    }
+    // beliefSum += rand_soft() / 255.0;
+    // for (int b = 0; b < SITE_NUM - 1; b++)
+    // {
+    //     beliefs[b] = beliefs[b] / beliefSum;
+    // }
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
     setDanceState(1, nestQualities[siteToVisit]);
 
     double probNotDancing = rand_soft() / 255.0;
-    if (probNotDancing <= 0.5 && nestQualities[siteToVisit] > 0)
-    {
-        setDanceState(1, nestQualities[siteToVisit]);
-    }
-    else
+    if (probNotDancing <= 0.5)
     {
         setDanceState(0, 0);
     }
@@ -89,6 +85,9 @@ void Kilobee::setup()
         	msg.data[byteIndex + i] = convertedBytes[(b * BELIEF_BYTES) + i];
         }
     }
+
+    std::cout << beliefs[0] << std::endl;
+    std::cout << bytesToDouble(&msg.data[2]) << std::endl;
 
     msg.type = NORMAL;
     msg.crc = message_crc(&msg);
@@ -210,15 +209,11 @@ void Kilobee::loop()
                 }
             }
 
-            double probNotDancing = rand_soft() / 255.0;
-            if (probNotDancing <= 0.5 && nestQualities[nest.site] > 0)
-            {
-                setDanceState(1, nestQualities[nest.site]);
-            }
-            else
-            {
-                setDanceState(0, 0);
-            }
+            // double probNotDancing = rand_soft() / 255.0;
+            // if (probNotDancing <= 0.5)
+            // {
+            //     setDanceState(0, 0);
+            // }
 
             if (danceState.state == 1)
             {

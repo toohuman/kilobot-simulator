@@ -19,8 +19,8 @@ using namespace Kilolib;
 #define MAX_MSG_SIZE 400
 #define MIN_DISTANCE 100
 
-#define BELIEF_BYTES 3
-#define BELIEF_PRECISION 7
+#define BELIEF_BYTES 2
+#define BELIEF_PRECISION 4
 
 
 class Kilobee : public Kilobot
