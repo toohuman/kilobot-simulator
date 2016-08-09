@@ -3,4 +3,4 @@ kilobox/Box2D/Documentation
 *.h~
 *.world~
 
-kilobox/worlds/generated
+worlds/generated
