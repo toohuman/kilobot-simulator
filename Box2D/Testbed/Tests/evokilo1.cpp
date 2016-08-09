@@ -45,27 +45,16 @@ void Kilobee::setup()
     // msg.type = NORMAL;
     // msg.crc = message_crc(&msg);
 
-    while (1)
+    double beliefSum = 0.0;
+    for (int b = 0; b < SITE_NUM - 1; b++)
     {
-        for (int b = 0; b < SITE_NUM - 1; b++)
-        {
-            beliefs[b] = rand_soft() / 255.0;
-        }
-
-        uint8_t exitScope = 1;
-        double prevBelief = beliefs[0];
-
-        for (int b = 1; b < SITE_NUM - 1; b++)
-        {
-           if (prevBelief > beliefs[b])
-           {
-                exitScope = 0;
-                break;
-           }
-        }
-
-        if (exitScope == 1)
-            break;
+        beliefs[b] = rand_soft() / 255.0;
+        beliefSum += beliefs[b];
+    }
+    beliefSum += rand_soft() / 255.0;
+    for (int b = 0; b < SITE_NUM - 1; b++)
+    {
+        beliefs[b] = beliefs[b] / beliefSum;
     }
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
