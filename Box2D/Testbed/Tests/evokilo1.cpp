@@ -55,11 +55,7 @@ void Kilobee::setup()
     setDanceState(1, nestQualities[siteToVisit]);
 
     double probNotDancing = rand_soft() / 255.0;
-    if (probNotDancing <= 0.5 && nestQualities[siteToVisit] > 0)
-    {
-        setDanceState(1, nestQualities[siteToVisit]);
-    }
-    else
+    if (probNotDancing <= 0.5)
     {
         setDanceState(0, 0);
     }
@@ -194,15 +190,11 @@ void Kilobee::loop()
                 }
             }
 
-            double probNotDancing = rand_soft() / 255.0;
-            if (probNotDancing <= 0.5 && nestQualities[nest.site] > 0)
-            {
-                setDanceState(1, nestQualities[nest.site]);
-            }
-            else
-            {
-                setDanceState(0, 0);
-            }
+            // double probNotDancing = rand_soft() / 255.0;
+            // if (probNotDancing <= 0.5)
+            // {
+            //     setDanceState(0, 0);
+            // }
 
             if (danceState.state == 1)
             {
