@@ -48,7 +48,7 @@ public:
     void loop();
 
     // Individual variables for bots
-    int updateTicks = 8; // 32 updates per second
+    int updateTicks = 16; // 32 updates per second
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
