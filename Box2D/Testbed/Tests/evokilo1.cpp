@@ -191,6 +191,12 @@ void Kilobee::loop()
                     free(dancingBees);
                 }
             }
+            else
+            {
+                uint8_t siteToVisit = getSiteToVisit(beliefs);
+                setNestSite(siteToVisit, nestQualities[siteToVisit]);
+                setDanceState(1, nestQualities[siteToVisit]);
+            }
 
             // double probNotDancing = rand_soft() / 255.0;
             // if (probNotDancing <= 0.5)
