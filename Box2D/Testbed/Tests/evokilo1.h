@@ -19,8 +19,8 @@ using namespace Kilolib;
 #define MAX_MSG_SIZE 400
 #define MIN_DISTANCE 100
 
-#define BELIEF_BYTES 2
-#define BELIEF_PRECISION 4
+#define BELIEF_BYTES 1
+#define BELIEF_PRECISION 0
 
 
 class Kilobee : public Kilobot
@@ -55,7 +55,7 @@ public:
     int nestQualities[SITE_NUM] = {7, 9};
     int loopCounter = 0;
 
-    double beliefs[SITE_NUM - 1];
+    uint8_t beliefs[SITE_NUM];
     int beliefStart = 2;
 
     // Frank's T-norm:
@@ -66,7 +66,7 @@ public:
     double baseParam = 1.0;
 
 
-    uint8_t messages[MAX_MSG_SIZE][2 + (BELIEF_BYTES * (SITE_NUM - 1))];
+    uint8_t messages[MAX_MSG_SIZE][2 + SITE_NUM];
     message_t msg;
 
     /*
@@ -124,27 +124,64 @@ public:
         }
     }
 
-    uint8_t getSiteToVisit(double *beliefs)
+    void formConsistentBeliefs(uint8_t *beliefs)
+    {
+        // Count the number of true propositions;
+        int trueCount = 0;
+        int borderlineCount = 0;
+        for (int b = 0; b < SITE_NUM; b++)
+        {
+            if (beliefs[b] == 2)
+            {
+                trueCount++;
+            }
+        }
+        // If greater than a single true value, convert to 1/2s.
+        if (trueCount > 1)
+        {
+            for (int b = 0; b < SITE_NUM; b++)
+            {
+                if (beliefs[b] == 2)
+                {
+                    beliefs[b] = 1;
+                }
+            }
+        }
+    }
+
+    uint8_t getSiteToVisit(uint8_t *beliefs)
     {
         int siteToVisit = -1;
 
-        double randomSite = (double) rand_soft() / 255.0;
+        int borderlineProps[SITE_NUM];
+        int bCount = 0;
 
-        for (int i = 0; i < SITE_NUM - 1; i++)
+        for (int i = 0; i < SITE_NUM; i++)
+            borderlineProps[i] = -1;
+
+        // Count the number of borderline propositions
+        for (int b = 0; b < SITE_NUM; b++)
         {
-            if (randomSite < beliefs[i])
+            if (beliefs[b] == 2)
+                return (uint8_t) b;
+            if (beliefs[b] == 1)
             {
-                siteToVisit = i;
-                break;
+                // Store site value and increase count
+                borderlineProps[bCount] = b;
+                bCount++;
             }
         }
-
-        if (siteToVisit == -1)
+        if (bCount >= 1)
         {
-            siteToVisit = SITE_NUM - 1;
-        }
+            // std::cout << "Borderline choice: " << (int) borderlineProps[0] << ";" << (int) borderlineProps[1] << std::endl;
 
-        return (uint8_t) siteToVisit;
+            // std::cout << "Borderline Count: " << (int) bCount << std::endl;
+        }
+        // std::cout << "Beliefs: " << (int) beliefs[0] << ";" << (int) beliefs[1] << std::endl;
+        siteToVisit = borderlineProps[rand_soft() % bCount];
+        // std::cout << "Site choice: " << (int) siteToVisit << std::endl;
+
+        return siteToVisit;
     }
 
     double franksTNorm(double belief1, double belief2, double p)
@@ -163,31 +200,38 @@ public:
         }
     }
 
-    void consensus(double *beliefs1, double *beliefs2, double *newBeliefs)
+    void consensus(uint8_t *beliefs1, uint8_t *beliefs2)
     {
-        for (int b = 0; b < SITE_NUM - 1; b++)
+        for (int b = 0; b < SITE_NUM; b++)
         {
-            double numerator = franksTNorm(beliefs1[b], beliefs2[b], baseParam);
-            double denominator = 1.0 - beliefs1[b] - beliefs2[b] + (2.0 * numerator);
-
-            double newValue = 0.0;
-
-            // Undefined behaviour of D-S rule of combination for inconsistent beliefs
-            if (denominator == 0.0)
+            if (beliefs1[b] == 2)
             {
-                newValue = 0.5;
+                if (beliefs2[b] == 0)
+                {
+                    beliefs1[b] = 1;
+                }
             }
-            else if (numerator == 0.0)
+            else if (beliefs1[b] == 0)
             {
-                newValue = 0.0;
+                if (beliefs2[b] == 2)
+                {
+                    beliefs1[b] = 1;
+                }
             }
-            else
+            else if (beliefs1[b] == 1)
             {
-                newValue = (numerator / denominator);
+                if (beliefs2[b] == 2)
+                {
+                    beliefs1[b] = 2;
+                }
+                else if (beliefs2[b] == 0)
+                {
+                    beliefs1[b] = 0;
+                }
             }
-
-            newBeliefs[b] = newValue;
         }
+
+        // std::cout << "Formed consensus: " << (int) beliefs1[0] << ":" << (int) beliefs1[1] << std::endl;
     }
 
     int generate = 0;
@@ -248,7 +292,7 @@ public:
             // Dance site
             messages[messageCount][1] = m->data[1];
             // Beliefs
-            for (int b = 0; b < 3 * (SITE_NUM - 1); b++)
+            for (int b = 0; b < SITE_NUM; b++)
             {
                 messages[messageCount][2 + b] = m->data[beliefStart + b];
             }
