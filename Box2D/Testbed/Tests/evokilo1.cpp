@@ -115,7 +115,21 @@ void Kilobee::loop()
                 break;
         }*/
 
-        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":" << beliefs[0] << ":" << (int) messageCount << std::endl;
+        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
+        int semiColon = 0;
+        for (int b = 0; b < SITE_NUM; b++)
+        {
+            if (!semiColon)
+            {
+                semiColon = 1;
+            }
+            else
+            {
+                std::cout << ";";
+            }
+            std::cout << (int) beliefs[b];
+        }
+        std::cout << ":" << (int) messageCount << std::endl;
 
         // Dance state
         msg.data[0] = danceState.state;
