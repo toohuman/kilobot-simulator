@@ -197,19 +197,9 @@ void Kilobee::loop()
 
                     uint8_t *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM)];
 
-                    // std::cout << "Beliefs 1: " << (int) beliefs[0] << ":" << (int) beliefs[1] << std::endl;
-                    // std::cout << "Beliefs 2: " << (int) otherBeliefs[0] << ":" << (int) otherBeliefs[1] << std::endl;
-
                     consensus(beliefs, otherBeliefs);
 
-                    // std::cout << "New Beliefs (pre): " << (int) beliefs[0] << ":" << (int) beliefs[1] << std::endl;
                     formConsistentBeliefs(beliefs);
-                    // std::cout << "New Beliefs (post): " << (int) beliefs[0] << ":" << (int) beliefs[1] << std::endl;
-
-                    // for (int i = 0; i < SITE_NUM - 1; i++)
-                    // {
-                    //     beliefs[i] = otherBeliefs[i];
-                    // }
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
@@ -224,12 +214,6 @@ void Kilobee::loop()
                 setNestSite(siteToVisit, nestQualities[siteToVisit]);
                 setDanceState(1, nestQualities[siteToVisit]);
             }
-
-            // double probNotDancing = rand_soft() / 255.0;
-            // if (probNotDancing <= 0.5)
-            // {
-            //     setDanceState(0, 0);
-            // }
 
             if (danceState.state == 1)
             {

@@ -171,15 +171,8 @@ public:
                 bCount++;
             }
         }
-        if (bCount >= 1)
-        {
-            // std::cout << "Borderline choice: " << (int) borderlineProps[0] << ";" << (int) borderlineProps[1] << std::endl;
 
-            // std::cout << "Borderline Count: " << (int) bCount << std::endl;
-        }
-        // std::cout << "Beliefs: " << (int) beliefs[0] << ";" << (int) beliefs[1] << std::endl;
         siteToVisit = borderlineProps[rand_soft() % bCount];
-        // std::cout << "Site choice: " << (int) siteToVisit << std::endl;
 
         return (uint8_t) siteToVisit;
     }
@@ -282,7 +275,6 @@ public:
     void rx_message(message_t *m, distance_measurement_t *d)
     {
         //int distance = estimate_distance(d);
-        //std::cout << distance << std::endl;
         if (1)// distance < min_distance)
         {
             // Dance state
