@@ -65,7 +65,6 @@ public:
     //
     double baseParam = 1.0;
 
-
     uint8_t messages[MAX_MSG_SIZE][2 + SITE_NUM];
     message_t msg;
 

@@ -177,9 +177,7 @@ void Kilobee::loop()
                     }
 
                     uint8_t *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM)];
-                    //double newBeliefs[SITE_NUM - 1];
 
-                    //consensus(beliefs, otherBeliefs, newBeliefs);
                     if (rand_soft() % 2 == 1)
                     {
 	                    for (int i = 0; i < SITE_NUM; i++)
