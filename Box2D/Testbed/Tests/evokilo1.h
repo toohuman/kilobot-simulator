@@ -56,7 +56,7 @@ public:
     int nestQualities[SITE_NUM] = {7, 9};
     int loopCounter = 0;
 
-    double beliefs[SITE_NUM - 1];
+    double beliefs[SITE_NUM];
     int beliefStart = 2;
 
     // Frank's T-norm:

@@ -51,6 +51,7 @@ void Kilobee::setup()
         beliefs[b] = rand_soft() / 255.0;
         // beliefSum += beliefs[b];
     }
+    beliefs[SITE_NUM - 1] = 1.0 - beliefs[0];
     // beliefSum += rand_soft() / 255.0;
     // for (int b = 0; b < SITE_NUM - 1; b++)
     // {
@@ -130,7 +131,7 @@ void Kilobee::loop()
         }*/
 
         std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
-        for (int i = 0; i < SITE_NUM - 1; i++)
+        for (int i = 0; i < SITE_NUM; i++)
         {
             if (i != 0)
             {
@@ -200,6 +201,7 @@ void Kilobee::loop()
                     {
                         beliefs[i] = newBeliefs[i];
                     }
+                    beliefs[SITE_NUM - 1] = 1.0 - beliefs[0];
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
