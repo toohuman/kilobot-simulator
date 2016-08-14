@@ -181,7 +181,7 @@ public:
         siteToVisit = borderlineProps[rand_soft() % bCount];
         // std::cout << "Site choice: " << (int) siteToVisit << std::endl;
 
-        return siteToVisit;
+        return (uint8_t) siteToVisit;
     }
 
     double franksTNorm(double belief1, double belief2, double p)
