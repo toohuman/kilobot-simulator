@@ -230,8 +230,6 @@ public:
                 }
             }
         }
-
-        // std::cout << "Formed consensus: " << (int) beliefs1[0] << ":" << (int) beliefs1[1] << std::endl;
     }
 
     int generate = 0;

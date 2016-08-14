@@ -205,11 +205,6 @@ void Kilobee::loop()
                     formConsistentBeliefs(beliefs);
                     // std::cout << "New Beliefs (post): " << (int) beliefs[0] << ":" << (int) beliefs[1] << std::endl;
 
-                    if (beliefs[0] == 0 && beliefs[1] == 0)
-                    {
-                        std::cout << "BELIEFS ARE ALL ZERO" << std::endl;
-                    }
-
                     // for (int i = 0; i < SITE_NUM - 1; i++)
                     // {
                     //     beliefs[i] = otherBeliefs[i];
