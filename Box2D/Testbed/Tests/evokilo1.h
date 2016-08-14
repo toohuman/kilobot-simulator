@@ -19,8 +19,8 @@ using namespace Kilolib;
 #define MAX_MSG_SIZE 400
 #define MIN_DISTANCE 100
 
-#define BELIEF_BYTES 2
-#define BELIEF_PRECISION 4
+#define BELIEF_BYTES 1
+#define BELIEF_PRECISION 1
 
 
 class Kilobee : public Kilobot
@@ -55,7 +55,7 @@ public:
     int nestQualities[SITE_NUM] = {7, 9};
     int loopCounter = 0;
 
-    double beliefs[SITE_NUM - 1];
+    uint8_t beliefs[SITE_NUM];
     int beliefStart = 2;
 
     // Frank's T-norm:
@@ -66,7 +66,7 @@ public:
     double baseParam = 1.0;
 
 
-    uint8_t messages[MAX_MSG_SIZE][2 + (BELIEF_BYTES * (SITE_NUM - 1))];
+    uint8_t messages[MAX_MSG_SIZE][2 + SITE_NUM];
     message_t msg;
 
     /*
