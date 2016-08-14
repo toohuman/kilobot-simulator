@@ -195,19 +195,19 @@ void Kilobee::loop()
 
                     for (int b = 0; b < SITE_NUM; b++)
                     {
-                        std::cout << votesForSite[b] << std::endl;
+                        // std::cout << votesForSite[b] << std::endl;
                         if (votesForSite[b] > maxVote)
                         {
-                            std::cout << maxVote << " < " << votesForSite[b] << std::endl;
+                            // std::cout << maxVote << " < " << votesForSite[b] << std::endl;
                             maxIndex = b;
                             maxVote = votesForSite[b];
                         }
-                        else if (votesForSite[b] = maxVote)
+                        else if (votesForSite[b] == maxVote)
                         {
                             if (rand_soft() % 2 == 1)
                             {
                                 maxIndex = b;
-                                std::cout << maxVote << " == " << votesForSite[b] << std::endl;
+                                // std::cout << maxVote << " == " << votesForSite[b] << std::endl;
                             }
                         }
                     }
