@@ -176,11 +176,52 @@ void Kilobee::loop()
                         }
                     }
 
-                    uint8_t *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM)];
-
+                    int votesForSite[SITE_NUM];
                     for (int i = 0; i < SITE_NUM; i++)
                     {
-                        beliefs[i] = otherBeliefs[i];
+                        votesForSite[i] = 0;
+                    }
+
+                    for (int dIndex = 0; dIndex < dancingBeeCount; dIndex++)
+                    {
+                        for (int b = 0; b < SITE_NUM; b++)
+                        {
+                            votesForSite[b] += dancingBees[dIndex + b];
+                        }
+                    }
+
+                    int maxIndex = -1;
+                    int maxVote = -1;
+
+                    for (int b = 0; b < SITE_NUM; b++)
+                    {
+                        std::cout << votesForSite[b] << std::endl;
+                        if (votesForSite[b] > maxVote)
+                        {
+                            std::cout << maxVote << " < " << votesForSite[b] << std::endl;
+                            maxIndex = b;
+                            maxVote = votesForSite[b];
+                        }
+                        else if (votesForSite[b] = maxVote)
+                        {
+                            if (rand_soft() % 2 == 1)
+                            {
+                                maxIndex = b;
+                                std::cout << maxVote << " == " << votesForSite[b] << std::endl;
+                            }
+                        }
+                    }
+
+                    for (int b = 0; b < SITE_NUM; b++)
+                    {
+                        if (b == maxIndex)
+                        {
+                            beliefs[b] = 1;
+                        }
+                        else
+                        {
+                            beliefs[b] = 0;
+                        }
                     }
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
