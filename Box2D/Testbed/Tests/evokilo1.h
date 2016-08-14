@@ -102,46 +102,17 @@ public:
         nest.siteQuality = quality;
     }
 
-    double bytesToDouble(uint8_t *msgData)
-    {
-        uint32_t reformedBytes = 0;
-        int b = 0;
-        for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
-        {
-            reformedBytes += (*(msgData + b++) << i);
-        }
-
-        return (double) reformedBytes / pow(10, BELIEF_PRECISION);
-    }
-
-    void doubleToBytes(double belief, uint8_t *convertedBytes)
-    {
-        uint32_t convertedBelief = (uint32_t) ((belief * pow(10, BELIEF_PRECISION)) + 0.5);
-        int b = 0;
-        for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
-        {
-            *(convertedBytes + b++) = (uint8_t) (convertedBelief >> i) & 0xFF;
-        }
-    }
-
-    uint8_t getSiteToVisit(double *beliefs)
+    uint8_t getSiteToVisit(uint8_t *beliefs)
     {
         int siteToVisit = -1;
 
-        double randomSite = (double) rand_soft() / 255.0;
-
-        for (int i = 0; i < SITE_NUM - 1; i++)
+        for (int i = 0; i < SITE_NUM; i++)
         {
-            if (randomSite < beliefs[i])
+            if (beliefs[i] == 1)
             {
                 siteToVisit = i;
                 break;
             }
-        }
-
-        if (siteToVisit == -1)
-        {
-            siteToVisit = SITE_NUM - 1;
         }
 
         return (uint8_t) siteToVisit;
@@ -163,30 +134,35 @@ public:
         }
     }
 
-    void consensus(double *beliefs1, double *beliefs2, double *newBeliefs)
+    void consensus(uint8_t *beliefs1, uint8_t *beliefs2)
     {
-        for (int b = 0; b < SITE_NUM - 1; b++)
+        for (int b = 0; b < SITE_NUM; b++)
         {
-            double numerator = franksTNorm(beliefs1[b], beliefs2[b], baseParam);
-            double denominator = 1.0 - beliefs1[b] - beliefs2[b] + (2.0 * numerator);
-
-            double newValue = 0.0;
-
-            // Undefined behaviour of D-S rule of combination for inconsistent beliefs
-            if (denominator == 0.0)
+            if (beliefs1[b] == 2)
             {
-                newValue = 0.5;
+                if (beliefs2[b] == 0)
+                {
+                    beliefs1[b] = 1;
+                }
             }
-            else if (numerator == 0.0)
+            else if (beliefs1[b] == 0)
             {
-                newValue = 0.0;
+                if (beliefs2[b] == 2)
+                {
+                    beliefs1[b] = 1;
+                }
             }
-            else
+            else if (beliefs1[b] == 1)
             {
-                newValue = (numerator / denominator);
+                if (beliefs2[b] == 2)
+                {
+                    beliefs1[b] = 2;
+                }
+                else if (beliefs2[b] == 0)
+                {
+                    beliefs1[b] = 0;
+                }
             }
-
-            newBeliefs[b] = newValue;
         }
     }
 
