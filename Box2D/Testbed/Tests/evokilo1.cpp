@@ -45,10 +45,12 @@ void Kilobee::setup()
     // msg.type = NORMAL;
     // msg.crc = message_crc(&msg);
 
-    for (int b = 0; b < SITE_NUM - 1; b++)
+    for (int b = 0; b < SITE_NUM; b++)
     {
-        beliefs[b] = rand_soft() % 2;
+        beliefs[b] = 0;
     }
+
+    beliefs[rand_soft() % SITE_NUM] = 1;
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
@@ -68,15 +70,9 @@ void Kilobee::setup()
     msg.data[0] = danceState.state;
     msg.data[1] = nest.site;
     // Beliefs
-    uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
-    for (int b = 0; b < SITE_NUM - 1; b++)
+    for (int b = 0; b < SITE_NUM; b++)
     {
-        int byteIndex = beliefStart + (b * BELIEF_BYTES);
-        doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
-        for (int i = 0; i < BELIEF_BYTES; i++)
-        {
-            msg.data[byteIndex + i] = convertedBytes[(b * BELIEF_BYTES) + i];
-        }
+        msg.data[beliefStart + b] = beliefs[b];
     }
 
     msg.type = NORMAL;
@@ -121,23 +117,17 @@ void Kilobee::loop()
 
         std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":" << beliefs[0] << ":" << (int) messageCount << std::endl;
 
-	    // Dance state
-	    msg.data[0] = danceState.state;
-	    msg.data[1] = nest.site;
-	    // Beliefs
-        uint8_t convertedBytes[BELIEF_BYTES * (SITE_NUM - 1)];
-        for (int b = 0; b < SITE_NUM - 1; b++)
+        // Dance state
+        msg.data[0] = danceState.state;
+        msg.data[1] = nest.site;
+        // Beliefs
+        for (int b = 0; b < SITE_NUM; b++)
         {
-            int byteIndex = beliefStart + (b * BELIEF_BYTES);
-            doubleToBytes(beliefs[b], convertedBytes + (b * BELIEF_BYTES));
-            for (int i = 0; i < BELIEF_BYTES; i++)
-            {
-                msg.data[byteIndex + i] = convertedBytes[(b * BELIEF_BYTES) + i];
-            }
+            msg.data[beliefStart + b] = beliefs[b];
         }
 
-	    msg.type = NORMAL;
-	    msg.crc = message_crc(&msg);
+        msg.type = NORMAL;
+        msg.crc = message_crc(&msg);
 
         if (danceState.state == 0)
         {
@@ -155,7 +145,7 @@ void Kilobee::loop()
 
                 if (dancingBeeCount > 0)
                 {
-                    double *dancingBees = (double *) malloc(sizeof(double) * (dancingBeeCount * SITE_NUM - 1));
+                    uint8_t *dancingBees = (uint8_t *) malloc(sizeof(uint8_t) * (dancingBeeCount * SITE_NUM));
                     int dbIndex = 0;
                     for (int i = 0; i < messageCount; i++)
                     {
@@ -163,22 +153,22 @@ void Kilobee::loop()
                         if (messages[i][0] == 1)
                         {
                             // Set the dancing bee to its beliefs
-                            for (int b = 0; b < SITE_NUM - 1; b++)
+                            for (int b = 0; b < SITE_NUM; b++)
                             {
-                            	dancingBees[dbIndex + b] = bytesToDouble(&messages[i][2 + b]);
+                                dancingBees[dbIndex + b] = messages[i][2 + b];
                             }
 
-                            dbIndex += SITE_NUM - 1;
+                            dbIndex += SITE_NUM;
                         }
                     }
 
-                    double *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM - 1)];
+                    uint8_t *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM)];
                     //double newBeliefs[SITE_NUM - 1];
 
                     //consensus(beliefs, otherBeliefs, newBeliefs);
                     if (rand_soft() % 2 == 1)
                     {
-	                    for (int i = 0; i < SITE_NUM - 1; i++)
+	                    for (int i = 0; i < SITE_NUM; i++)
 	                    {
 	                        beliefs[i] = otherBeliefs[i];
 	                    }

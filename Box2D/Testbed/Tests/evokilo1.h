@@ -19,8 +19,8 @@ using namespace Kilolib;
 #define MAX_MSG_SIZE 400
 #define MIN_DISTANCE 100
 
-#define BELIEF_BYTES 2
-#define BELIEF_PRECISION 4
+#define BELIEF_BYTES 1
+#define BELIEF_PRECISION 1
 
 
 class Kilobee : public Kilobot
@@ -55,7 +55,7 @@ public:
     int nestQualities[SITE_NUM] = {7, 9};
     int loopCounter = 0;
 
-    double beliefs[SITE_NUM - 1];
+    uint8_t beliefs[SITE_NUM];
     int beliefStart = 2;
 
     // Frank's T-norm:
@@ -66,7 +66,7 @@ public:
     double baseParam = 1.0;
 
 
-    uint8_t messages[MAX_MSG_SIZE][2 + (BELIEF_BYTES * (SITE_NUM - 1))];
+    uint8_t messages[MAX_MSG_SIZE][2 + SITE_NUM];
     message_t msg;
 
     /*
@@ -102,46 +102,17 @@ public:
         nest.siteQuality = quality;
     }
 
-    double bytesToDouble(uint8_t *msgData)
-    {
-        uint32_t reformedBytes = 0;
-        int b = 0;
-        for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
-        {
-            reformedBytes += (*(msgData + b++) << i);
-        }
-
-        return (double) reformedBytes / pow(10, BELIEF_PRECISION);
-    }
-
-    void doubleToBytes(double belief, uint8_t *convertedBytes)
-    {
-        uint32_t convertedBelief = (uint32_t) ((belief * pow(10, BELIEF_PRECISION)) + 0.5);
-        int b = 0;
-        for (int i = 8 * (BELIEF_BYTES - 1); i >= 0; i -= 8)
-        {
-            *(convertedBytes + b++) = (uint8_t) (convertedBelief >> i) & 0xFF;
-        }
-    }
-
-    uint8_t getSiteToVisit(double *beliefs)
+    uint8_t getSiteToVisit(uint8_t *beliefs)
     {
         int siteToVisit = -1;
 
-        double randomSite = (double) rand_soft() / 255.0;
-
-        for (int i = 0; i < SITE_NUM - 1; i++)
+        for (int i = 0; i < SITE_NUM; i++)
         {
-            if (randomSite < beliefs[i])
+            if (beliefs[i] == 1)
             {
                 siteToVisit = i;
                 break;
             }
-        }
-
-        if (siteToVisit == -1)
-        {
-            siteToVisit = SITE_NUM - 1;
         }
 
         return (uint8_t) siteToVisit;
@@ -240,7 +211,6 @@ public:
     void rx_message(message_t *m, distance_measurement_t *d)
     {
         //int distance = estimate_distance(d);
-        //std::cout << distance << std::endl;
         if (1)// distance < min_distance)
         {
             // Dance state
