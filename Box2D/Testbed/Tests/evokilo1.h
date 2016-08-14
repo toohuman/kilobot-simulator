@@ -216,7 +216,6 @@ public:
     void rx_message(message_t *m, distance_measurement_t *d)
     {
         //int distance = estimate_distance(d);
-        //std::cout << distance << std::endl;
         if (1)// distance < min_distance)
         {
             // Dance state
@@ -224,7 +223,7 @@ public:
             // Dance site
             messages[messageCount][1] = m->data[1];
             // Beliefs
-            for (int b = 0; b < 3 * (SITE_NUM - 1); b++)
+            for (int b = 0; b < SITE_NUM; b++)
             {
                 messages[messageCount][2 + b] = m->data[beliefStart + b];
             }
