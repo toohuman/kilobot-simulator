@@ -149,6 +149,7 @@ void Kilobee::loop()
             std::cout << (int) beliefs[b];
         }
         std::cout << ":" << (int) messageCount << std::endl;
+
 	    // Dance state
 	    msg.data[0] = danceState.state;
 	    msg.data[1] = nest.site;
