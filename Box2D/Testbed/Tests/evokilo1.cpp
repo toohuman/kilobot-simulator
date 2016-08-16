@@ -96,7 +96,7 @@ void Kilobee::loop()
         lastUpdate = kilo_ticks;
 
         // Random movement
-        /*switch(rand_soft() % 4)
+        switch(rand_soft() % 4)
         {
             case(0):
                 set_motors(0,0);
@@ -113,7 +113,7 @@ void Kilobee::loop()
                 //if (last_output == 0) spinup_motors();
                 set_motors(kilo_straight_left, kilo_straight_right); // 65
                 break;
-        }*/
+        }
 
         std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
         int semiColon = 0;
