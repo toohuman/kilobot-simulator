@@ -193,6 +193,8 @@ void Kilobee::loop()
                     int maxIndex = -1;
                     int maxVote = -1;
 
+                    // std::cout << "Current site: " << (int) nest.site << std::endl;
+
                     for (int b = 0; b < SITE_NUM; b++)
                     {
                         // std::cout << votesForSite[b] << std::endl;
@@ -217,6 +219,7 @@ void Kilobee::loop()
                         if (b == maxIndex)
                         {
                             beliefs[b] = 1;
+                            // std::cout << "Choosing site: " << (int) maxIndex << std::endl;
                         }
                         else
                         {
@@ -262,9 +265,16 @@ void Kilobee::loop()
 
             if (danceState.duration < 1)
             {
-                // Bee no longer dances
-                setDanceState(0, 0);
-                set_color(RGB(0, 0, 0));
+                // if (rand_soft() % 2 == 1)
+                // {
+                //     setDanceState(1, nestQualities[nest.site]);
+                // }
+                // else
+                // {
+                    // Bee no longer dances
+                    setDanceState(0, 0);
+                    set_color(RGB(0, 0, 0));
+                // }
             }
         }
 
