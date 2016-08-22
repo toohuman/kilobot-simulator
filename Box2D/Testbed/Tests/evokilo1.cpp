@@ -106,6 +106,9 @@ void Kilobee::setup()
         // Set colour to black; not dancing
         set_color(RGB(0, 0, 0));
     }
+
+    nestQualities[0] = nestQualities[0] + round(get_noise());
+    nestQualities[1] = nestQualities[1] + round(get_noise());
 }
 
 void Kilobee::loop()
