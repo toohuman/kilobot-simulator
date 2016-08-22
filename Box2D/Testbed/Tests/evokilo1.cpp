@@ -134,21 +134,21 @@ void Kilobee::loop()
                 break;
         }*/
 
-        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
-        int semiColon = 0;
-        for (int b = 0; b < SITE_NUM; b++)
-        {
-            if (!semiColon)
-            {
-                semiColon = 1;
-            }
-            else
-            {
-                std::cout << ";";
-            }
-            std::cout << (int) beliefs[b];
-        }
-        std::cout << ":" << (int) messageCount << std::endl;
+        // std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
+        // int semiColon = 0;
+        // for (int b = 0; b < SITE_NUM; b++)
+        // {
+        //     if (!semiColon)
+        //     {
+        //         semiColon = 1;
+        //     }
+        //     else
+        //     {
+        //         std::cout << ";";
+        //     }
+        //     std::cout << (int) beliefs[b];
+        // }
+        // std::cout << ":" << (int) messageCount << std::endl;
 
 	    // Dance state
 	    msg.data[0] = danceState.state;
@@ -213,6 +213,12 @@ void Kilobee::loop()
                 uint8_t siteToVisit = getSiteToVisit(beliefs);
                 setNestSite(siteToVisit, nestQualities[siteToVisit]);
                 setDanceState(1, nestQualities[siteToVisit]);
+
+                // double probNotDancing = rand_soft() / 255.0;
+                // if (probNotDancing <= 0.5)
+                // {
+                //     setDanceState(0, 0);
+                // }
             }
 
             if (danceState.state == 1)

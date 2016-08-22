@@ -76,7 +76,7 @@ public:
     struct NestSite
     {
         uint8_t site;
-        uint8_t siteQuality;
+        uint8_t quality;
     };
 
     struct State
@@ -99,7 +99,7 @@ public:
     void setNestSite(uint8_t site, uint8_t quality)
     {
         nest.site = site;
-        nest.siteQuality = quality;
+        nest.quality = quality;
     }
 
     double bytesToDouble(uint8_t *msgData)
@@ -240,6 +240,9 @@ public:
 
             z1 = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
             z2 = sqrt(-2.0 * log(u1)) * sin(2.0 * M_PI * u2);
+
+            z1 = (1.0 * z1);
+            z2 = (1.0 * z2);
 
             generate++;
             return z2;
