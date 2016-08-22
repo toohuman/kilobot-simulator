@@ -52,6 +52,11 @@ void Kilobee::setup()
 
     beliefs[rand_soft() % SITE_NUM] = 1;
 
+    // for (int i = 0; i < SITE_NUM; i++)
+    // {
+    //     nestQualities[i] = nestQualities[i] + round(get_noise());
+    // }
+
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
     setDanceState(1, nestQualities[siteToVisit]);
