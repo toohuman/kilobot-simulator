@@ -71,10 +71,10 @@ void Kilobee::setup()
     //     std::cout << "NOT SUCCESSFUL" << std::endl;
     // }
 
-    for (int i = 0; i < SITE_NUM; i++)
-    {
-        nestQualities[i] = nestQualities[i] + round(get_noise());
-    }
+    // for (int i = 0; i < SITE_NUM; i++)
+    // {
+    //     nestQualities[i] = nestQualities[i] + round(get_noise());
+    // }
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
