@@ -175,8 +175,14 @@ void Kilobee::loop()
 
                 if (dancingBeeCount > 0)
                 {
-                    double *dancingBees = (double *) malloc(sizeof(double) * (dancingBeeCount * SITE_NUM - 1));
-                    int dbIndex = 0;
+                    double newBeliefs[SITE_NUM - 1];
+                    for (int b = 0; b < SITE_NUM; b++)
+                    {
+                        newBeliefs[b] = 0.0;
+                    }
+
+                    // double *dancingBees = (double *) malloc(sizeof(double) * (dancingBeeCount * SITE_NUM - 1));
+                    // int dbIndex = 0;
                     for (int i = 0; i < messageCount; i++)
                     {
                         // If bee's dance state is true
@@ -185,17 +191,13 @@ void Kilobee::loop()
                             // Set the dancing bee to its beliefs
                             for (int b = 0; b < SITE_NUM - 1; b++)
                             {
-                            	dancingBees[dbIndex + b] = bytesToDouble(&messages[i][2 + b]);
+                            	newBeliefs[dbIndex + b] += bytesToDouble(&messages[i][2 + b]);
                             }
 
                             dbIndex += SITE_NUM - 1;
                         }
                     }
 
-                    double *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM - 1)];
-                    double newBeliefs[SITE_NUM - 1];
-
-                    consensus(beliefs, otherBeliefs, newBeliefs);
 
                     for (int i = 0; i < SITE_NUM - 1; i++)
                     {
