@@ -63,12 +63,17 @@ void Kilobee::setup()
             }
         }
     }
-    std::cout << (int) beliefs[0] << ";" << (int) beliefs[1] << std::endl;
+    //b std::cout << (int) beliefs[0] << ";" << (int) beliefs[1] << std::endl;
     formConsistentBeliefs(beliefs);
-    std::cout << (int) beliefs[0] << ";" << (int) beliefs[1] << std::endl;
-    if (beliefs[0] == 2 && beliefs[1] == 2)
+    // std::cout << (int) beliefs[0] << ";" << (int) beliefs[1] << std::endl;
+    // if (beliefs[0] == 2 && beliefs[1] == 2)
+    // {
+    //     std::cout << "NOT SUCCESSFUL" << std::endl;
+    // }
+
+    for (int i = 0; i < SITE_NUM; i++)
     {
-        std::cout << "NOT SUCCESSFUL" << std::endl;
+        nestQualities[i] = nestQualities[i] + round(get_noise());
     }
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
@@ -106,9 +111,6 @@ void Kilobee::setup()
         // Set colour to black; not dancing
         set_color(RGB(0, 0, 0));
     }
-
-    nestQualities[0] = nestQualities[0] + round(get_noise());
-    nestQualities[1] = nestQualities[1] + round(get_noise());
 }
 
 void Kilobee::loop()
@@ -137,21 +139,21 @@ void Kilobee::loop()
                 break;
         }*/
 
-        // std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
-        // int semiColon = 0;
-        // for (int b = 0; b < SITE_NUM; b++)
-        // {
-        //     if (!semiColon)
-        //     {
-        //         semiColon = 1;
-        //     }
-        //     else
-        //     {
-        //         std::cout << ";";
-        //     }
-        //     std::cout << (int) beliefs[b];
-        // }
-        // std::cout << ":" << (int) messageCount << std::endl;
+        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
+        int semiColon = 0;
+        for (int b = 0; b < SITE_NUM; b++)
+        {
+            if (!semiColon)
+            {
+                semiColon = 1;
+            }
+            else
+            {
+                std::cout << ";";
+            }
+            std::cout << (int) beliefs[b];
+        }
+        std::cout << ":" << (int) messageCount << std::endl;
 
 	    // Dance state
 	    msg.data[0] = danceState.state;
