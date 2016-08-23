@@ -175,10 +175,10 @@ void Kilobee::loop()
 
                 if (dancingBeeCount > 0)
                 {
-                    double newBeliefs[SITE_NUM - 1];
+                    double newBeliefs[SITE_NUM];
                     for (int b = 0; b < SITE_NUM; b++)
                     {
-                        newBeliefs[b] = 0.0;
+                        newBeliefs[b] = beliefs[b];
                     }
 
                     // double *dancingBees = (double *) malloc(sizeof(double) * (dancingBeeCount * SITE_NUM - 1));
@@ -191,17 +191,17 @@ void Kilobee::loop()
                             // Set the dancing bee to its beliefs
                             for (int b = 0; b < SITE_NUM - 1; b++)
                             {
-                            	newBeliefs[dbIndex + b] += bytesToDouble(&messages[i][2 + b]);
+                            	newBeliefs[b] += bytesToDouble(&messages[i][2 + b]);
                             }
 
-                            dbIndex += SITE_NUM - 1;
+                            // dbIndex += SITE_NUM - 1;
                         }
                     }
 
 
                     for (int i = 0; i < SITE_NUM - 1; i++)
                     {
-                        beliefs[i] = newBeliefs[i];
+                        beliefs[i] = newBeliefs[i] / (dancingBeeCount + 1);
                     }
                     beliefs[SITE_NUM - 1] = 1.0 - beliefs[0];
 
@@ -209,7 +209,7 @@ void Kilobee::loop()
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
                     setDanceState(1, nestQualities[siteToVisit]);
 
-                    free(dancingBees);
+                    // free(dancingBees);
                 }
             }
             else
