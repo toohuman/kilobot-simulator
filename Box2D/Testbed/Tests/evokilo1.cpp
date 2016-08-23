@@ -52,14 +52,9 @@ void Kilobee::setup()
 
     beliefs[rand_soft() % SITE_NUM] = 1;
 
-    // for (int i = 0; i < SITE_NUM; i++)
-    // {
-    //     nestQualities[i] = nestQualities[i] + round(get_noise());
-    // }
-
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
-    setDanceState(1, nestQualities[siteToVisit]);
+    setDanceState(1, nestQualities[siteToVisit] + round(get_noise()));
 
     double probNotDancing = rand_soft() / 255.0;
     if (probNotDancing <= 0.5)
@@ -190,7 +185,7 @@ void Kilobee::loop()
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);
                     setNestSite(siteToVisit, nestQualities[siteToVisit]);
-                    setDanceState(1, nestQualities[siteToVisit]);
+                    setDanceState(1, nestQualities[siteToVisit] + round(get_noise()));
 
                     free(dancingBees);
                 }
@@ -199,7 +194,7 @@ void Kilobee::loop()
             {
                 uint8_t siteToVisit = getSiteToVisit(beliefs);
                 setNestSite(siteToVisit, nestQualities[siteToVisit]);
-                setDanceState(1, nestQualities[siteToVisit]);
+                setDanceState(1, nestQualities[siteToVisit] + round(get_noise()));
             }
 
             // double probNotDancing = rand_soft() / 255.0;
