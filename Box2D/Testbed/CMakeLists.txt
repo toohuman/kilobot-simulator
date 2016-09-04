@@ -44,7 +44,7 @@ if(APPLE)
 elseif(WIN32)
 	set (ADDITIONAL_LIBRARIES winmm)
 else(APPLE)
-    set (ADDITIONAL_LIBRARIES freeglut_static)
+    set (ADDITIONAL_LIBRARIES freeglut_static X11)
 endif(APPLE)
 
 add_executable(Testbed
