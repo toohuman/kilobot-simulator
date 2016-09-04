@@ -95,6 +95,11 @@ void Kilobee::loop()
     {
         lastUpdate = kilo_ticks;
 
+        // if (loopCounter == 50)
+        // {
+        //     nestQualities[1] = 0;
+        // }
+
         // Random movement
         /*switch(rand_soft() % 4)
         {
