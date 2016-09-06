@@ -116,7 +116,7 @@ void Kilobee::loop()
 
         // if (loopCounter == 10)
         // {
-        //     nestQualities[1] = 0;
+        //     nestQualities[1] = 1;
         // }
 
         // Random movement
