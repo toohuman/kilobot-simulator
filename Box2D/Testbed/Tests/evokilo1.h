@@ -52,7 +52,7 @@ public:
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
-    int nestQualities[SITE_NUM] = {10, 15};
+    int nestQualities[SITE_NUM] = {7, 9};
     int loopCounter = 0;
 
     uint8_t beliefs[SITE_NUM];
@@ -241,8 +241,8 @@ public:
             z1 = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
             z2 = sqrt(-2.0 * log(u1)) * sin(2.0 * M_PI * u2);
 
-            z1 = (1 * z1);
-            z2 = (1 * z2);
+            z1 = (0 * z1);
+            z2 = (0 * z2);
 
             generate++;
             return z2;
