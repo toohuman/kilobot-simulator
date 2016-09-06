@@ -95,7 +95,7 @@ void Kilobee::loop()
     {
         lastUpdate = kilo_ticks;
 
-        // if (loopCounter == 10)
+        // if (loopCounter == 50)
         // {
         //     nestQualities[1] = 0;
         // }
