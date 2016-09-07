@@ -268,5 +268,4 @@ void Kilobee::loop()
         messageCount = 0;
         loopCounter++;
     }
-
 }
