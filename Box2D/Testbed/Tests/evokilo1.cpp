@@ -49,14 +49,15 @@ void Kilobee::setup()
     for (int b = 0; b < SITE_NUM - 1; b++)
     {
         uint32_t reformedBytes = 0;
+        uint32_t maxValue = 0;
         for (int i = 8 * 3; i >= 0; i -= 8)
         {
-            reformedBytes += ((rand_soft() / 255.0) << i);
+            reformedBytes += (rand_soft() << i);
+            maxValue += (255 << i);
         }
-        beliefs[b] = reformedBytes / pow(10, );
+        beliefs[b] = (double) reformedBytes / (double) maxValue;
         // beliefSum += beliefs[b];
     }
-    std::cout << beliefs[0] << std::endl;
     beliefs[SITE_NUM - 1] = 1.0 - beliefs[0];
     // beliefSum += rand_soft() / 255.0;
     // for (int b = 0; b < SITE_NUM - 1; b++)
