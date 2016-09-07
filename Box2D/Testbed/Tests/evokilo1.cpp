@@ -48,9 +48,15 @@ void Kilobee::setup()
     // double beliefSum = 0.0;
     for (int b = 0; b < SITE_NUM - 1; b++)
     {
+        uint32_t reformedBytes = 0;
+        for (int i = 8 * 3; i >= 0; i -= 8)
+        {
+            reformedBytes += ((rand_soft() / 255.0) << i);
+        }
         beliefs[b] = rand_soft() / 255.0;
         // beliefSum += beliefs[b];
     }
+    std::cout << beliefs[0] << std::endl;
     beliefs[SITE_NUM - 1] = 1.0 - beliefs[0];
     // beliefSum += rand_soft() / 255.0;
     // for (int b = 0; b < SITE_NUM - 1; b++)
