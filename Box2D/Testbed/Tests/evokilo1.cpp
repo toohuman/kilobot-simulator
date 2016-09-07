@@ -53,7 +53,7 @@ void Kilobee::setup()
         {
             reformedBytes += ((rand_soft() / 255.0) << i);
         }
-        beliefs[b] = rand_soft() / 255.0;
+        beliefs[b] = reformedBytes / pow(10, );
         // beliefSum += beliefs[b];
     }
     std::cout << beliefs[0] << std::endl;
