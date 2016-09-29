@@ -77,8 +77,8 @@ namespace Kilolib
         Kiloworld(Settings *_settings)
         :
             settings(_settings),
-            xsize(3.0),
-            ysize(2.0),
+            xsize(1.2),
+            ysize(1.2),
             xgrid(1),
             ygrid(1),
             gridmargin(0.2),
@@ -87,26 +87,26 @@ namespace Kilolib
         {
             // Turn off gravity
             m_world->SetGravity(b2Vec2(0,0));
-            
+
             // Initialise the random number generator
             gen.seed(1);
-            
+
             // Construct the world
             build_world();
 
             // Tell the engine that we have a contact callback
             m_world->SetContactListener(&contact_listener);
         }
-        
+
         void Step(Settings* settings);
         void Finish(Settings* settings);
-        
+
         void build_world();
         void parse_worldfile(float xoffset, float yoffset);
         void make_static_box(float xsize, float ysize, float xpos, float ypos);
         void render_arena();
         void make_kilobot(float xp, float yp, float th);
-        
+
         // Function called by the testbench to create the world
         static Test* Create(Settings *settings)
         {
@@ -140,7 +140,7 @@ namespace Kilolib
             std::uniform_real_distribution<float>   dist(low, high);
             return dist(gen);
         }
-        
+
         // Set up a random number generator
         std::mt19937              gen;
 
@@ -151,7 +151,7 @@ namespace Kilolib
         Worldfile *wf;
 
         std::vector<std::string> ctrlarg_words;
-       
+
     };
 
 

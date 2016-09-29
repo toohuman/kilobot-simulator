@@ -243,6 +243,26 @@ void Kilobee::loop()
 
             if (danceState.state == 1)
             {
+                // Random movement
+                switch(rand_soft() % 4)
+                {
+                    case(0):
+                        set_motors(0,0);
+                        break;
+                    case(1):
+                        //if (last_output == 0) spinup_motors();
+                        set_motors(kilo_turn_left,0); // 70
+                        break;
+                    case(2):
+                        //if (last_output == 0) spinup_motors();
+                        set_motors(0,kilo_turn_right); // 70
+                        break;
+                    case(3):
+                        //if (last_output == 0) spinup_motors();
+                        set_motors(kilo_straight_left, kilo_straight_right); // 65
+                        break;
+                }
+
                 set_bot_colour(nest.site);
             }
             else
