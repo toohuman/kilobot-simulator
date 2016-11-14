@@ -15,7 +15,7 @@
 using namespace Kilolib;
 
 // Default values for core definitions
-#define SITE_NUM 2
+#define SITE_NUM 3
 #define MAX_MSG_SIZE 400
 #define MIN_DISTANCE 100
 
@@ -52,7 +52,7 @@ public:
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
-    int nestQualities[SITE_NUM] = {7, 9};
+    int nestQualities[SITE_NUM] = {7, 9, 11};
     int loopCounter = 0;
 
     uint8_t beliefs[SITE_NUM];
@@ -128,7 +128,6 @@ public:
     {
         // Count the number of true propositions;
         int trueCount = 0;
-        int borderlineCount = 0;
         for (int b = 0; b < SITE_NUM; b++)
         {
             if (beliefs[b] == 2)
@@ -144,6 +143,31 @@ public:
                 if (beliefs[b] == 2)
                 {
                     beliefs[b] = 1;
+                }
+            }
+        }
+        // Count number of true and borderline values. If 0 and 1 respectively
+        // then convert single borderline to true.
+        trueCount = 0;
+        int borderlineCount = 0;
+        for (int b = 0; b < SITE_NUM; b++)
+        {
+            if (beliefs[b] == 2)
+            {
+                trueCount++;
+            }
+            else if (beliefs[b] == 1)
+            {
+                borderlineCount++;
+            }
+        }
+        if (trueCount == 0 && borderlineCount == 1)
+        {
+            for (int b = 0; b < SITE_NUM; b++)
+            {
+                if (beliefs[b] == 1)
+                {
+                    beliefs[b] = 2;
                 }
             }
         }
@@ -171,7 +195,6 @@ public:
                 bCount++;
             }
         }
-
         siteToVisit = borderlineProps[rand_soft() % bCount];
 
         return (uint8_t) siteToVisit;
