@@ -77,8 +77,8 @@ namespace Kilolib
         Kiloworld(Settings *_settings)
         :
             settings(_settings),
-            xsize(1.2),
-            ysize(1.2),
+            xsize(1.8),
+            ysize(1.8),
             xgrid(1),
             ygrid(1),
             gridmargin(0.2),

@@ -16,7 +16,7 @@ using namespace Kilolib;
 
 // Default values for core definitions
 #define SITE_NUM 3
-#define MAX_MSG_SIZE 400
+#define MAX_MSG_SIZE 800
 #define MIN_DISTANCE 100
 
 #define BELIEF_BYTES 1
