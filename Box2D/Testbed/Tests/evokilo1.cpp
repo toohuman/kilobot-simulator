@@ -45,12 +45,35 @@ void Kilobee::setup()
     // msg.type = NORMAL;
     // msg.crc = message_crc(&msg);
 
-    for (int b = 0; b < SITE_NUM; b++)
+    // for (int b = 0; b < SITE_NUM; b++)
+    // {
+    //     beliefs[b] = 0;
+    // }
+
+    // beliefs[rand_soft() % SITE_NUM] = 1;
+
+    for (int b = 0; b < PREF_LIMIT; b++)
     {
         beliefs[b] = 0;
     }
 
-    beliefs[rand_soft() % SITE_NUM] = 1;
+    for (int b = 0; b < PREF_LIMIT; b++)
+    {
+        int duplicateChoice = 1;
+        while (duplicateChoice)
+        {
+            beliefs[b] = rand_soft() % SITE_NUM;
+            duplicateChoice = 0;
+            for (int c = 0; c < b; c++)
+            {
+                if (beliefs[c] == beliefs[b])
+                {
+                    duplicateChoice = 1;
+                    break;
+                }
+            }
+        }
+    }
 
     uint8_t siteToVisit = getSiteToVisit(beliefs);
     setNestSite(siteToVisit, nestQualities[siteToVisit]);
@@ -75,7 +98,7 @@ void Kilobee::setup()
     msg.data[0] = danceState.state;
     msg.data[1] = nest.site;
     // Beliefs
-    for (int b = 0; b < SITE_NUM; b++)
+    for (int b = 0; b < PREF_LIMIT; b++)
     {
         msg.data[beliefStart + b] = beliefs[b];
     }
@@ -127,7 +150,7 @@ void Kilobee::loop()
 
         std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
         int semiColon = 0;
-        for (int b = 0; b < SITE_NUM; b++)
+        for (int b = 0; b < PREF_LIMIT; b++)
         {
             if (!semiColon)
             {
@@ -135,7 +158,7 @@ void Kilobee::loop()
             }
             else
             {
-                std::cout << ";";
+                std::cout << "-";
             }
             std::cout << (int) beliefs[b];
         }
@@ -145,7 +168,7 @@ void Kilobee::loop()
 	    msg.data[0] = danceState.state;
 	    msg.data[1] = nest.site;
         // Beliefs
-        for (int b = 0; b < SITE_NUM; b++)
+        for (int b = 0; b < PREF_LIMIT; b++)
         {
             msg.data[beliefStart + b] = beliefs[b];
         }
@@ -169,7 +192,7 @@ void Kilobee::loop()
 
                 if (dancingBeeCount > 0)
                 {
-                    uint8_t *dancingBees = (uint8_t *) malloc(sizeof(uint8_t) * (dancingBeeCount * SITE_NUM));
+                    uint8_t *dancingBees = (uint8_t *) malloc(sizeof(uint8_t) * (dancingBeeCount * PREF_LIMIT));
                     int dbIndex = 0;
                     for (int i = 0; i < messageCount; i++)
                     {
@@ -177,20 +200,44 @@ void Kilobee::loop()
                         if (messages[i][0] == 1)
                         {
                             // Set the dancing bee to its beliefs
-                            for (int b = 0; b < SITE_NUM; b++)
+                            for (int b = 0; b < PREF_LIMIT; b++)
                             {
                                 dancingBees[dbIndex + b] = messages[i][2 + b];
                             }
 
-                            dbIndex += SITE_NUM;
+                            dbIndex += PREF_LIMIT;
                         }
                     }
 
-                    uint8_t *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (SITE_NUM)];
+                    //uint8_t *otherBeliefs = &dancingBees[(rand_soft() % dancingBeeCount) * (PREF_LIMIT)];
 
-                    for (int i = 0; i < SITE_NUM; i++)
+                    /*
+                     * Loop through dancing bees and tally votes for each site
+                     */
+                    int siteVotes[SITE_NUM];
+                    for (int s = 0; s < SITE_NUM; s++)
                     {
-                        beliefs[i] = otherBeliefs[i];
+                        siteVotes[s] = 0;
+                    }
+                    dbIndex = 0;
+                    for (int i = 0; i < dancingBeeCount; i++)
+                    {
+                        // Sum up votes for each site
+                        for (int b = 0; b < PREF_LIMIT; b++)
+                        {
+                            siteVotes[dancingBees[dbIndex + b]] += 1;
+                        }
+
+                        dbIndex += PREF_LIMIT;
+                    }
+
+                    /*******************/
+
+                    for (int i = PREF_LIMIT - 1; i >= 0; i--)
+                    {
+                        int site = getHighestVoteIndex(siteVotes);
+                        beliefs[i] = site;
+                        siteVotes[site] = 0;
                     }
 
                     uint8_t siteToVisit = getSiteToVisit(beliefs);

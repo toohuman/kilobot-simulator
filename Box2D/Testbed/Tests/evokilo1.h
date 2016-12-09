@@ -15,7 +15,8 @@
 using namespace Kilolib;
 
 // Default values for core definitions
-#define SITE_NUM 3
+#define SITE_NUM 5
+#define PREF_LIMIT 3
 #define MAX_MSG_SIZE 800
 #define MIN_DISTANCE 100
 
@@ -52,10 +53,10 @@ public:
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
-    int nestQualities[SITE_NUM] = {5, 8, 11};
+    int nestQualities[SITE_NUM] = {5, 8, 11, 13, 17};
     int loopCounter = 0;
 
-    uint8_t beliefs[SITE_NUM];
+    uint8_t beliefs[PREF_LIMIT];
     int beliefStart = 2;
 
     // Frank's T-norm:
@@ -66,7 +67,7 @@ public:
     double baseParam = 1.0;
 
 
-    uint8_t messages[MAX_MSG_SIZE][2 + SITE_NUM];
+    uint8_t messages[MAX_MSG_SIZE][2 + PREF_LIMIT];
     message_t msg;
 
     /*
@@ -76,7 +77,7 @@ public:
     struct NestSite
     {
         uint8_t site;
-        uint8_t siteQuality;
+        uint8_t quality;
     };
 
     struct State
@@ -99,23 +100,12 @@ public:
     void setNestSite(uint8_t site, uint8_t quality)
     {
         nest.site = site;
-        nest.siteQuality = quality;
+        nest.quality = quality;
     }
 
     uint8_t getSiteToVisit(uint8_t *beliefs)
     {
-        int siteToVisit = -1;
-
-        for (int i = 0; i < SITE_NUM; i++)
-        {
-            if (beliefs[i] == 1)
-            {
-                siteToVisit = i;
-                break;
-            }
-        }
-
-        return (uint8_t) siteToVisit;
+        return (uint8_t) beliefs[PREF_LIMIT - 1];
     }
 
     double franksTNorm(double belief1, double belief2, double p)
@@ -131,6 +121,51 @@ public:
         else
         {
             return log(1.0 + (pow(exp(p), belief1) - 1.0) * (pow(exp(p), belief2) - 1.0) / (exp(p) - 1.0) ) / p;
+        }
+    }
+
+    int getHighestVoteIndex(int *siteVotes)
+    {
+        int maxVotes = -1;
+        int maxIndex = 0;
+        int maxIndices[SITE_NUM];
+        for (int i = 0; i < SITE_NUM; i++)
+        {
+            maxIndices[i] = -1;
+        }
+        for (int s = 0; s < SITE_NUM; s++)
+        {
+            if (siteVotes[s] > maxVotes)
+            {
+                for (int i = 0; i < maxIndex; i++)
+                {
+                    maxIndices[i] = -1;
+                }
+                maxIndex = 0;
+
+                maxVotes = siteVotes[s];
+                maxIndices[maxIndex] = s;
+                maxIndex++;
+            }
+            else if (siteVotes[s] == maxVotes)
+            {
+                maxIndices[maxIndex] = s;
+                maxIndex++;
+            }
+        }
+
+        if (maxIndices[1] == -1)
+        {
+            return maxIndices[0];
+        }
+        else
+        {
+            int index = maxIndices[rand_soft() % maxIndex];
+            while (index == -1)
+            {
+                index = maxIndices[rand_soft() % maxIndex];
+            }
+            return index;
         }
     }
 
@@ -203,9 +238,18 @@ public:
                 set_color(RGB(3, 0, 0));
                 break;
             case 1:
-                set_color(RGB(0, 0, 3));
+                set_color(RGB(1, 0, 3));
                 break;
             case 2:
+                set_color(RGB(0, 0, 3));
+                break;
+            case 3:
+                set_color(RGB(0, 1, 3));
+                break;
+            case 4:
+                set_color(RGB(0, 3, 1));
+                break;
+            case 5:
                 set_color(RGB(0, 3, 0));
                 break;
         }
