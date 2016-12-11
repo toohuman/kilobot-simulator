@@ -150,7 +150,7 @@ void Kilobee::loop()
 
         std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
         int semiColon = 0;
-        for (int b = 0; b < PREF_LIMIT; b++)
+        for (int s = 0; s < SITE_NUM; s++)
         {
             if (!semiColon)
             {
@@ -158,9 +158,19 @@ void Kilobee::loop()
             }
             else
             {
-                std::cout << "-";
+                std::cout << ";";
             }
-            std::cout << (int) beliefs[b];
+            double normBelief = 0;
+            double normaliser = (PREF_LIMIT * (PREF_LIMIT + 1)) / 2;
+            for (int b = 0; b < PREF_LIMIT; b++)
+            {
+                if (beliefs[b] == s)
+                {
+                    normBelief = (b + 1) / normaliser;
+                    break;
+                }
+            }
+            std::cout << (float) normBelief;
         }
         std::cout << ":" << (int) messageCount << std::endl;
 
@@ -225,7 +235,10 @@ void Kilobee::loop()
                         // Sum up votes for each site
                         for (int b = 0; b < PREF_LIMIT; b++)
                         {
-                            siteVotes[dancingBees[dbIndex + b]] += 1;
+                            // Single-vote
+                            // siteVotes[dancingBees[dbIndex + b]] += 1;
+                            // Borda counts
+                            siteVotes[dancingBees[dbIndex + b]] += b + 1;
                         }
 
                         dbIndex += PREF_LIMIT;
