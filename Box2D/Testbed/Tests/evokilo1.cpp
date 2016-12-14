@@ -116,7 +116,7 @@ void Kilobee::setup()
 
     if (isMalicious == 1)
     {
-        set_color(RGB(2, 0, 3));
+        set_color(RGB(3, 3, 3));
     }
     else if (danceState.state == 1)
     {
