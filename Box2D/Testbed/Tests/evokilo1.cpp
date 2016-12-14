@@ -45,6 +45,18 @@ void Kilobee::setup()
     // msg.type = NORMAL;
     // msg.crc = message_crc(&msg);
 
+    /*
+     * MALICIOUS AGENT DETERMINATION
+     */
+
+    if ((rand_soft() / 255.0) < 0.0)
+    {
+        std::cout << "Malicious" << std::endl;
+        isMalicious = 1;
+    }
+
+    ////////////////////////////////
+
     int zeroCount = SITE_NUM;
     while (zeroCount == SITE_NUM)
     {
@@ -102,7 +114,11 @@ void Kilobee::setup()
     msg.type = NORMAL;
     msg.crc = message_crc(&msg);
 
-    if (danceState.state == 1)
+    if (isMalicious == 1)
+    {
+        set_color(RGB(2, 0, 3));
+    }
+    else if (danceState.state == 1)
     {
         set_bot_colour(nest.site);
     }
@@ -144,21 +160,24 @@ void Kilobee::loop()
                 break;
         }*/
 
-        std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
-        int semiColon = 0;
-        for (int b = 0; b < SITE_NUM; b++)
+        if (isMalicious == 0)
         {
-            if (!semiColon)
+            std::cout << "+:" << (int) loopCounter << ":" << (int) danceState.state << ":" << (int) nest.site << ":";
+            int semiColon = 0;
+            for (int b = 0; b < SITE_NUM; b++)
             {
-                semiColon = 1;
+                if (!semiColon)
+                {
+                    semiColon = 1;
+                }
+                else
+                {
+                    std::cout << ";";
+                }
+                std::cout << (int) beliefs[b];
             }
-            else
-            {
-                std::cout << ";";
-            }
-            std::cout << (int) beliefs[b];
+            std::cout << ":" << (int) messageCount << std::endl;
         }
-        std::cout << ":" << (int) messageCount << std::endl;
 
 	    // Dance state
 	    msg.data[0] = danceState.state;
@@ -174,7 +193,34 @@ void Kilobee::loop()
 
         if (danceState.state == 0)
         {
-            if (messageCount > 0)
+            if (isMalicious == 1)
+            {
+                int zeroCount = SITE_NUM;
+                while (zeroCount == SITE_NUM)
+                {
+                    zeroCount = 0;
+                    for (int b = 0; b < SITE_NUM; b++)
+                    {
+                        uint8_t truthValue = (rand_soft() % 2);
+                        if (truthValue == 1)
+                            truthValue = 2;
+
+                        beliefs[b] = truthValue;
+
+                        if (beliefs[b] == 0)
+                        {
+                            zeroCount++;
+                        }
+                    }
+                }
+
+                formConsistentBeliefs(beliefs);
+
+                uint8_t siteToVisit = getSiteToVisit(beliefs);
+                setNestSite(siteToVisit, nestQualities[siteToVisit]);
+                setDanceState(1, nestQualities[siteToVisit]);
+            }
+            else if (messageCount > 0)
             {
                 int dancingBeeCount = 0;
                 for (int i = 0; i < messageCount; i++)
@@ -241,7 +287,11 @@ void Kilobee::loop()
                 // }
             }
 
-            if (danceState.state == 1)
+            if (isMalicious == 1)
+            {
+                set_color(RGB(3, 3, 3));
+            }
+            else if (danceState.state == 1)
             {
                 set_bot_colour(nest.site);
             }
