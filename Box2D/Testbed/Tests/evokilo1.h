@@ -15,7 +15,7 @@
 using namespace Kilolib;
 
 // Default values for core definitions
-#define SITE_NUM 5
+#define SITE_NUM 10
 #define PREF_LIMIT 3
 #define MAX_MSG_SIZE 800
 #define MIN_DISTANCE 100
@@ -53,7 +53,7 @@ public:
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
-    int nestQualities[SITE_NUM] = {5, 8, 11, 13, 17};
+    int nestQualities[SITE_NUM] = {3, 5, 7, 9, 11, 14, 17, 20, 23, 26};
     int loopCounter = 0;
 
     uint8_t beliefs[PREF_LIMIT];

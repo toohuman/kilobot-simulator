@@ -236,9 +236,9 @@ void Kilobee::loop()
                         for (int b = 0; b < PREF_LIMIT; b++)
                         {
                             // Single-vote
-                            // siteVotes[dancingBees[dbIndex + b]] += 1;
+                            siteVotes[dancingBees[dbIndex + b]] += 1;
                             // Borda counts
-                            siteVotes[dancingBees[dbIndex + b]] += b + 1;
+                            // siteVotes[dancingBees[dbIndex + b]] += b + 1;
                         }
 
                         dbIndex += PREF_LIMIT;
