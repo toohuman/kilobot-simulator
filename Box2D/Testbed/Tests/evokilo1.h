@@ -147,8 +147,8 @@ public:
                 }
             }
         }
-        // Count number of true and borderline values. If 0 and 1 respectively
-        // then convert single borderline to true.
+        // Count number of true, borderline and false values. If 0, 1 and 0 respectively
+        // then convert single borderline to true. If all false, convert to all borderlines
         trueCount = 0;
         int borderlineCount = 0;
         for (int b = 0; b < SITE_NUM; b++)
@@ -170,6 +170,13 @@ public:
                 {
                     beliefs[b] = 2;
                 }
+            }
+        }
+        else if (trueCount == 0 && borderlineCount == 0)
+        {
+            for (int b = 0; b < SITE_NUM; b++)
+            {
+                beliefs[b] = 1;
             }
         }
     }
