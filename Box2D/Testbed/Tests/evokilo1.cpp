@@ -49,7 +49,7 @@ void Kilobee::setup()
      * MALICIOUS AGENT DETERMINATION
      */
 
-    if ((rand_soft() / 255.0) < 0.0)
+    if ((rand_soft() / 255.0) < 0.50)
     {
         std::cout << "Malicious" << std::endl;
         isMalicious = 1;
