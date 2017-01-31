@@ -52,7 +52,7 @@ public:
     int initialDelay = 0;
     int lastUpdate = -1;
     int messageCount = 0;
-    int nestQualities[SITE_NUM] = {5, 8, 11, 14, 17};
+    int nestQualities[SITE_NUM] = {5, 10, 15, 20, 25};
     int loopCounter = 0;
 
     uint8_t beliefs[SITE_NUM];
