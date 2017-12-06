@@ -203,6 +203,36 @@ public:
                 bCount++;
             }
         }
+        // siteToVisit = borderlineProps[rand_soft() % bCount];
+        // Instead of returning a random site to signal for, return -1
+        // and don't signal, just skip straight to updating.
+        siteToVisit = -1;
+
+        return (uint8_t) siteToVisit;
+    }
+
+    uint8_t getSiteToVisitMalf(uint8_t *beliefs)
+    {
+        int siteToVisit = -1;
+
+        int borderlineProps[SITE_NUM];
+        int bCount = 0;
+
+        for (int i = 0; i < SITE_NUM; i++)
+            borderlineProps[i] = -1;
+
+        // Count the number of borderline propositions
+        for (int b = 0; b < SITE_NUM; b++)
+        {
+            if (beliefs[b] == 2)
+                return (uint8_t) b;
+            if (beliefs[b] == 1)
+            {
+                // Store site value and increase count
+                borderlineProps[bCount] = b;
+                bCount++;
+            }
+        }
         siteToVisit = borderlineProps[rand_soft() % bCount];
 
         return (uint8_t) siteToVisit;
