@@ -105,6 +105,7 @@ void Kilobee::setup()
     if (probNotDancing <= 0.5)
     {
         setDanceState(0, 0);
+        set_color(RGB(0, 0, 0));
     }
 
     // Generate random integers to fill both ID bytes, leading to a 16-bit
@@ -225,7 +226,7 @@ void Kilobee::loop()
 
                 formConsistentBeliefs(beliefs);
 
-                uint8_t siteToVisit = getSiteToVisitMalf(beliefs);
+                uint8_t siteToVisit = getSiteToVisitMal(beliefs);
                 setNestSite(siteToVisit, nestQualities[siteToVisit]);
                 setDanceState(1, nestQualities[siteToVisit]);
             }

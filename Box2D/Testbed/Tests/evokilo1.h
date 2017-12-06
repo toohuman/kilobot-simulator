@@ -211,7 +211,7 @@ public:
         return (uint8_t) siteToVisit;
     }
 
-    uint8_t getSiteToVisitMalf(uint8_t *beliefs)
+    uint8_t getSiteToVisitMal(uint8_t *beliefs)
     {
         int siteToVisit = -1;
 
