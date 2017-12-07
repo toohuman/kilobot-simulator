@@ -303,12 +303,6 @@ void Kilobee::loop()
                     }
                     setDanceState(1, danceDuration);
                 }
-
-                // double probNotDancing = rand_soft() / 255.0;
-                // if (probNotDancing <= 0.5)
-                // {
-                //     setDanceState(0, 0);
-                // }
             }
 
             if (isMalicious == 1)
