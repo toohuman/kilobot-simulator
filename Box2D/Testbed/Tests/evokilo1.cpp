@@ -88,7 +88,6 @@ void Kilobee::setup()
     if (siteToVisit == (uint8_t) -1)
     {
         setDanceState(0, 0);
-        set_color(RGB(0, 0, 0));
     }
     else
     {
@@ -105,7 +104,6 @@ void Kilobee::setup()
     if (probNotDancing <= 0.5)
     {
         setDanceState(0, 0);
-        set_color(RGB(0, 0, 0));
     }
 
     // Generate random integers to fill both ID bytes, leading to a 16-bit
@@ -272,7 +270,6 @@ void Kilobee::loop()
                     if (siteToVisit == (uint8_t) -1)
                     {
                         setDanceState(0, 0);
-                        set_color(RGB(0, 0, 0));
                     }
                     else
                     {
@@ -295,7 +292,6 @@ void Kilobee::loop()
                 if (siteToVisit == (uint8_t) -1)
                 {
                     setDanceState(0, 0);
-                    set_color(RGB(0, 0, 0));
                 }
                 else
                 {
