@@ -145,6 +145,14 @@ public:
                 {
                     beliefs[b] = 1;
                 }
+                else if (beliefs[b] == 1)
+                {
+                    // If we have multiple true props, then they should become
+                    // borderline, while all other possible borderline props
+                    // become false like the rest, as the choice is between
+                    // the multiple true props.
+                    beliefs[b] = 0;
+                }
             }
         }
         // Count number of true, borderline and false values. If 0, 1 and 0 respectively
