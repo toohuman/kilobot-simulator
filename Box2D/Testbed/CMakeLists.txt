@@ -57,7 +57,7 @@ target_link_libraries (
 	Box2D
 	#freeglut_static
 	glui
-	X11
+	#X11
 	${ADDITIONAL_LIBRARIES}
 	${OPENGL_LIBRARIES}
 )
