@@ -1,3 +1,9 @@
+Original Kilobox simulator written by Simon Jones, with minimal modifications by Michael Crosscombe.
+Most of the simulation environment is left untouched, and the majority of the changes in this repository
+revolve around my own experiments. Please see Simon's original BitBucket repository linked below.
+
+-------------------------------------------------------------------------------------------------------
+
 Kilobox - A Kilobot simulator based on Box2D
 ============================================
 
